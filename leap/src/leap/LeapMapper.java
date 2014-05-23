@@ -53,12 +53,7 @@ class SampleListener extends Listener {
                          + ", tools: " + frame.tools().count()
                          + ", gestures " + frame.gestures().count()
                          + ", time " + now);*/  
-        try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+     
       //  System.out.println("hand palmposition "+frame.hands().get(0).palmPosition());
        // System.out.println("hand palmvelocity "+frame.hands().get(0).palmVelocity());
        
@@ -70,13 +65,14 @@ class LeapMapper {
 	
 	public static Controller controller = new Controller();
 	public static SampleListener listener = new SampleListener();
+	public static Recorder listener2 = new Recorder();
     public static void main(String[] args) throws IOException, InterruptedException {
         // Create a sample listener and controller
        
        
 
         // Have the sample listener receive events from the controller
-        controller.addListener(listener);
+      //  controller.addListener(listener);
 
         // Keep this process running until Enter is pressed
         System.out.println("Type exit to quit...");
@@ -106,7 +102,7 @@ while(true){
            
 
         // Remove the sample listener when done
-        controller.removeListener(listener);
+      //  controller.removeListener(listener);
 
     }
 
