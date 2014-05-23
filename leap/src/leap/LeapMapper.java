@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.KeyStroke;
+
 import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Frame;
 import com.leapmotion.leap.Listener;
@@ -65,111 +67,53 @@ class SampleListener extends Listener {
 }
 
 class LeapMapper {
-	public static ArrayList<UserGesture> gestures= new ArrayList<UserGesture>();
-    public static void main(String[] args) {
+	
+	public static Controller controller = new Controller();
+	public static SampleListener listener = new SampleListener();
+    public static void main(String[] args) throws IOException, InterruptedException {
         // Create a sample listener and controller
-        SampleListener listener = new SampleListener();
-        Controller controller = new Controller();
+       
+       
 
         // Have the sample listener receive events from the controller
         controller.addListener(listener);
 
         // Keep this process running until Enter is pressed
-        System.out.println("Press Enter to quit...");
-        System.out.println("Press R to record new gesture");
+        System.out.println("Type exit to quit...");
+        System.out.println("Press R to record new gesture \n");
  
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-       
-
-
-        try {
-			if(bufferRead.readLine().equals("r")){
-				System.out.println("Recording a new gesture.\n Press X to start and Y to stop recording");
-				Recorder(controller);
-			    
-   }
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Recorder rec = new Recorder();
+        String input = null;
+        int gesturecount= -1;
+while(true){
+     input=bufferRead.readLine().toString();
+		
+			if(input.equals("exit")){
+				break;
+			    }
+			else if(input.equals("r")){
+				gesturecount=gesturecount+1;
+				rec.init(gesturecount);
+		        System.out.println("\n \n \n \n \n");
+		        System.out.println("Type exit to quit...");
+		        System.out.println("Press R to record new gesture \n");
+			    }
         
-        Roboter();
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    }
+
+           
 
         // Remove the sample listener when done
         controller.removeListener(listener);
 
     }
 
-	private static void Roboter() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private static void Recorder(Controller controller) {
-		 BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-	       
-	    	Vector startPos = new Vector();
-	    	Vector endPos = new Vector();
-		 int i=0;
-		 try {
-				if(bufferRead.readLine().equals("x")){
-				
-					startPos = controller.frame().hands().get(0).palmPosition();
 
-				    System.out.println("started recording. starting pos is "+startPos);		    
-	   }
-				
-		 }catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		 }
-		 try {
-				if(bufferRead.readLine().equals("y")){
-				
-					endPos = controller.frame().hands().get(0).palmPosition();
-				    System.out.println("stopped recording. end pos is "+endPos);		    
-	   }
-				
-		 }catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		 }
-	
-		 
-		
 
-		
-		 UserGesture e = new UserGesture();
-		 gestures.add(i, e);
-		 gestures.set(i, e).vector.setX(endPos.getX()-startPos.getX());
-		 gestures.set(i, e).vector.setZ(endPos.getZ()-startPos.getZ());
-		 gestures.set(i, e).vector.setY(0);
-		 System.out.println("which button should the gesture trigger?");
-		 try {
-			 gestures.set(i, e).keycode = bufferRead.readLine().toString();
-		} catch (IOException ee) {
-			// TODO Auto-generated catch block
-			ee.printStackTrace();
-		}
-		
-		 System.out.println("Recorded data ");
-		 System.out.println("gesture_vector= " +gestures.get(i).vector.toString());
-		 System.out.println("gesture_key= " +gestures.get(i).keycode.toString());
-	
-}
 
 }
- class UserGesture{ 
-	
-	public Vector vector = new Vector();
-	public String keycode = "";
-			
 
-	
-}
 
