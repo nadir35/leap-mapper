@@ -3,8 +3,8 @@ package leap;
 public class Node {
 
 	public float x;
-	public float y;
-	public float z;
+	public  float y;
+	public  float z;
 	public long timestamp;
 	
 	 public String toString() {

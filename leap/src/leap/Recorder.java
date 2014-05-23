@@ -16,7 +16,7 @@ public class Recorder {
 	Vector currentPos = new Vector();
 	long startTime;
 	 int gestureCount;
-	 int nodeCount =0;
+	 int nodeCount ;
 	 BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 	 public static ArrayList<UserGesture> gestureList= new ArrayList<UserGesture>();
 	 UserGesture newGesture = new UserGesture();
@@ -39,43 +39,54 @@ public class Recorder {
 	public void start() throws IOException, InterruptedException {
 		// TODO Auto-generated constructor stub
 		
-		  Node newnode = new Node();
-		while (Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getX())<=20 &&
+		  Node startnode = new Node();
+		while (Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getX())<=20 ||
 				Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getZ())<=20 ){
 		        System.out.println("hand palmvelocity "+LeapMapper.controller.frame().hands().get(0).palmVelocity());
 		}
-		
+		 System.out.println("hand palmvelocity "+LeapMapper.controller.frame().hands().get(0).palmVelocity());
 		startPos = LeapMapper.controller.frame().hands().get(0).palmPosition();
 		startTime =System.currentTimeMillis();
 		
-		  newnode.x=startPos.getX()-startPos.getX();
-		  newnode.y=startPos.getY()-startPos.getY();
-		  newnode.z=startPos.getZ()-startPos.getZ();
-		  newnode.timestamp=System.currentTimeMillis();
-		  newGesture.NodeList.add(nodeCount, newnode);
-		  nodeCount=nodeCount+1;
-      System.out.println("started recording. starting pos is "+startPos);		 
-      
-			this.nodefactory();
+		 startnode.x=startPos.getX();
+		  startnode.y=startPos.getY();
+		  startnode.z=startPos.getZ();
+		  startnode.timestamp=System.currentTimeMillis();
+		 if(newGesture.NodeList.isEmpty()){  
+			 System.out.println("list 0, adding startnode");
+			 newGesture.NodeList.add(nodeCount, startnode);}
+
+      System.out.println("started recording. starting pos is "+startPos);	
+	  System.out.println(nodeCount+"     "+startnode.toString());
+	  nodeCount=nodeCount+1;
+			nodefactory();
 
 	}
 	public void nodefactory() throws IOException, InterruptedException {
 		// TODO Auto-generated constructor stub
-		while (Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getX())>=20 &&
-				Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getZ())>=20 ){
-		        Node newnode = new Node();
-		        Thread.sleep(100);
+		Node newnode = new Node();
+		while (Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getX())>=10 ||
+				Math.abs(LeapMapper.controller.frame().hands().get(0).palmVelocity().getZ())>=10 )
+		{
+		
+	        Thread.sleep(100);
+	  	  System.out.println("neeuer loop von nodefactory");
+		         newnode = new Node();
+
 		 currentPos = LeapMapper.controller.frame().hands().get(0).palmPosition();
-		  newnode.x=currentPos.getX()-newGesture.NodeList.get(nodeCount-1).x;
-		  newnode.y=currentPos.getY()-newGesture.NodeList.get(nodeCount-1).y;
-		  newnode.z=currentPos.getZ()-newGesture.NodeList.get(nodeCount-1).z;
-		  newnode.timestamp=System.currentTimeMillis()-newGesture.NodeList.get(nodeCount-1).timestamp;
-		  newGesture.NodeList.add(nodeCount, newnode);
+	      System.out.println("currentpos is "+currentPos);	
+		  newnode.x=currentPos.getX()-newGesture.NodeList.get(newGesture.NodeList.size()-1).x;
+		  newnode.y=0;
+		 // newnode.y=currentPos.getY()-newGesture.NodeList.get(nodeCount-1).y;
+		  newnode.z=currentPos.getZ()-newGesture.NodeList.get(newGesture.NodeList.size()-1).z;
+		  newnode.timestamp=System.currentTimeMillis()-newGesture.NodeList.get(newGesture.NodeList.size()-1).timestamp;
+		  newGesture.NodeList.add(nodeCount, newnode);		    
+		  System.out.println(nodeCount+"     "+newnode.toString());
 		  nodeCount=nodeCount+1;
 
 		}
 		 
-		    System.out.println("node count is "+nodeCount);
+		    System.out.println("stopped recording. node count is "+nodeCount);
 	    this.assignAction();
 
 	}
@@ -83,8 +94,11 @@ public class Recorder {
 		// TODO Auto-generated constructor stub
 		 System.out.println("which button should the gesture trigger?");
 		 newGesture.keycode = bufferRead.readLine().toString();
-		 System.out.println("gest lsit size"+gestureList.size());
-		 System.out.println(gestureCount);
+		 
+		 newGesture.NodeList.get(0).timestamp=0;	
+		 newGesture.NodeList.get(0).x=0;
+		 newGesture.NodeList.get(0).y=0;
+		 newGesture.NodeList.get(0).z=0;
 		 gestureList.add(gestureCount, newGesture);
 		 
  this.printGestures();
@@ -94,7 +108,7 @@ public class Recorder {
 		System.out.println("List of Gestures");
 		for (int i=0;i<gestureList.size();i++)
 		{
-			 System.out.println("gesture["+i+"]_nodeList = " +gestureList.get(i).NodeList.toString());
+			 System.out.println("gesture["+i+"]_nodeList = " +gestureList.get(i).toString());
 			 System.out.println("gesture["+i+"]_key = " +gestureList.get(i).keycode.toString());
 			 
 			 
