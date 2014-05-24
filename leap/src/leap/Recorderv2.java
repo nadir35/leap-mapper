@@ -136,13 +136,10 @@ class Recorderv2 {
 			status= status+1;
 			while(status==1){
 				System.out.println("	click to node the current position to node["+(newGesture.NodeList.size())+"]");
-				input = bufferRead.readLine().toString();
-				if (input.equals("y")){ status=2;break;}
 				frame=controller.frame();
 				Node newnode = new Node();
 				while(frame.hands().isEmpty()){
-						System.out.println("no hands detected, press again");
-						input = bufferRead.readLine().toString();
+						System.out.println("no hands detected");
 						frame=controller.frame();}
 
 				currentPos = frame.hands().get(0).palmPosition();
