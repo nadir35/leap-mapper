@@ -130,6 +130,7 @@ class Recorderv2 {
 			startnode.x = startPos.getX();
 			startnode.y = startPos.getY();
 			startnode.z = startPos.getZ();
+			startnode.frame= frame;
 			startnode.timestamp = System.currentTimeMillis();
 			if (newGesture.NodeList.isEmpty()) {
 				// System.out.println("list 0, adding startnode");
@@ -156,6 +157,7 @@ class Recorderv2 {
 			currentPos = frame.hands().get(0).palmPosition();
 			// System.out.println("currentpos is " + currentPos);
 			newnode.x = currentPos.getX();
+			newnode.frame= frame;
 					//- newGesture.NodeList.get(newGesture.NodeList.size() - 1).x;
 			newnode.y = 0;
 			// newnode.y=currentPos.getY()-newGesture.NodeList.get(nodeCount-1).y;
