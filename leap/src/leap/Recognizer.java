@@ -47,8 +47,8 @@ class SampleListener3 extends Listener {
 public class Recognizer {
 	public static Controller controller = new Controller();
 	public static SampleListener3 listener2 = new SampleListener3();
-	public static float deviationX =0.05F;
-	public static float deviationZ =0.05F;
+	public static float deviationX =0.10F;
+	public static float deviationZ =0.10F;
 	static Frame frame;
 
 	public static void main(String[] args) throws IOException,
@@ -78,24 +78,25 @@ while(MapperGUI.statusRecognizing==true){
 	frame= controller.frame();
 	for (int i =0; i<gestureList.size();i++){
 		for (int j=1;j<gestureList.get(i).NodeList.size();j++){
-			while(frame.hands().get(0).palmPosition().normalized().getX()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmNormal().getX()+deviationX ||
-					frame.hands().get(0).palmPosition().normalized().getX()<gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmNormal().getX()-deviationX ||
-					frame.hands().get(0).palmPosition().normalized().getZ()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmNormal().getZ()+deviationZ ||
-					frame.hands().get(0).palmPosition().normalized().getZ()<gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmNormal().getZ()-deviationZ
+			while(frame.hands().get(0).palmPosition().normalized().getX()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getX()+deviationX ||
+					frame.hands().get(0).palmPosition().normalized().getX()<gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getX()-deviationX ||
+					frame.hands().get(0).palmPosition().normalized().getZ()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getZ()+deviationZ ||
+					frame.hands().get(0).palmPosition().normalized().getZ()<gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getZ()-deviationZ
 					){
+				frame= controller.frame();
 				System.out.println(frame.hands().get(0).palmPosition().normalized());
 		
 			}
-			System.out.println("matched node number"+j);
-			
+			System.out.println("matched node number"+gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized()+"with "+frame.hands().get(0).palmPosition().normalized());
+			break;
 			
 		}
-		
+	
 		
 		
 		
 	}
-	
+	//MapperGUI.statusRecognizing=false;
 	
 	
 	
