@@ -42,6 +42,8 @@ class SampleListener2 extends Listener {
 
 	public void onFrame(Controller controller) {
 		// Get the most recent frame and report some basic information
+		Frame frame = controller.frame();
+		Date now = new Date();
 
 	}
 
