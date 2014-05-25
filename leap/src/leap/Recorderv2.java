@@ -94,7 +94,7 @@ class Recorderv2 {
 			}
 
 			// Remove the sample listener when done
-			// controller.removeListener(listener);
+			 controller.removeListener(listener);
 
 		}
 
@@ -145,7 +145,7 @@ class Recorderv2 {
 			// System.out.println("	click to node the current position to node["+(newGesture.NodeList.size())+"]");
 			frame = controller.frame();
 			Node newnode = new Node();
-			Thread.sleep(100);
+			Thread.sleep(50);
 			while (frame.hands().isEmpty() && MapperGUI.statusRecording == true) {
 				System.out.println("no hands detected");
 				frame = controller.frame();

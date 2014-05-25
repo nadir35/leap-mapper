@@ -44,7 +44,7 @@ class SampleListener3 extends Listener {
 
 }
 
-public class Recognizer {
+ class Recognizer {
 	public static Controller controller = new Controller();
 	// private static SampleListener listener = new SampleListener();
 	public static float deviationX = 0.10F;
@@ -73,7 +73,7 @@ public class Recognizer {
 
 		while (MapperGUI.statusRecognizing == true) {
 			frame = controller.frame();
-
+			Thread.sleep(5);
 			for (int gestureIterator = 0; gestureIterator < gestureList.size(); gestureIterator++) {
 				// System.out.println("timer start"+timer);
 				for (int nodeIterator = matched[gestureIterator] + 1; nodeIterator < gestureList
