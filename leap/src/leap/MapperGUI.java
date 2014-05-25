@@ -10,10 +10,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Random;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class MapperGUI extends JFrame {
 
@@ -33,18 +30,13 @@ public class MapperGUI extends JFrame {
 		JButton showPlot = new JButton("Show Plot");
 		JButton startRecog = new JButton("Start Recognition");
 
-
 		getContentPane().add(panel);
 
 		setTitle("LeapRecorder");
-		setLocation(500, 300);
-		//setLocationRelativeTo(null);
-		startRecButton.setLocation(100, 100);
-		stopRecButton.setLocation(200, 100);
-		showPlot.setLocation(100, 200);
-		startMapper.setLocation(100, 300);
-		startRecog.setLocation(100, 500);
-		deleteButton.setLocation(300, 100);
+		setLocation(430, 330);
+		// setLocationRelativeTo(null);
+		panel.setLayout(null);
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		startRecButton.addActionListener(new ActionListener() {
@@ -79,23 +71,27 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				statusRecording = false;
 				runningRecording = false;
-				deleteButton.setText("delete gesture nr. "+Recorderv2.gestureCount);
+				deleteButton.setText("delete gesture nr. "
+						+ Recorderv2.gestureCount);
 
 			}
 		});
-		
+
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if (Recorderv2.gestureCount!=0){
-					Recorderv2.gestureList.remove(Recorderv2.gestureList.size()-1);
-					Recorderv2.gestureCount=Recorderv2.gestureCount-1;
-					System.out.println("gesture nr "+Recorderv2.gestureCount+" deleted");
-					deleteButton.setText("delete gesture nr. "+Recorderv2.gestureCount);}
-				if(Recorderv2.gestureCount==0) deleteButton.setText("no gestures to delete");
+				if (Recorderv2.gestureCount != 0) {
+					Recorderv2.gestureList.remove(Recorderv2.gestureList.size() - 1);
+					Recorderv2.gestureCount = Recorderv2.gestureCount - 1;
+					System.out.println("gesture nr " + Recorderv2.gestureCount
+							+ " deleted");
+					deleteButton.setText("delete gesture nr. "
+							+ Recorderv2.gestureCount);
+				}
+				if (Recorderv2.gestureCount == 0)
+					deleteButton.setText("no gestures to delete");
 			}
 		});
-		stopRecButton.setBounds(50, 60, 80, 30);
 		showPlot.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -108,7 +104,6 @@ public class MapperGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 
-			
 				ActionMapper ps = new ActionMapper();
 				ps.setVisible(true);
 			}
@@ -138,18 +133,22 @@ public class MapperGUI extends JFrame {
 					t.start();
 					runningRecognizing = true;
 				}
-			
-			
+
 			}
 		});
-		
+
 		panel.add(startRecButton);
 		panel.add(stopRecButton);
 		panel.add(showPlot);
 		panel.add(startMapper);
 		panel.add(startRecog);
-		panel.add(deleteButton).setBounds(100, 200,80, 30);;
-		
+		panel.add(deleteButton);
+		startRecButton.setBounds(100, 100, 120, 30);
+		stopRecButton.setBounds(250, 100, 140, 30);
+		showPlot.setBounds(100, 200, 120, 30);
+		startMapper.setBounds(100, 300, 120, 30);
+		startRecog.setBounds(100, 400, 140, 30);
+		deleteButton.setBounds(400, 100, 180, 30);
 		setResizable(false);
 
 		// panel2.add(new Surface());
@@ -190,7 +189,7 @@ class Surface extends JPanel {
 
 		if (finger == false) {
 			for (int i = 1; i < Recorderv2.gestureList
-					.get(Recorderv2.gestureCount - 1).NodeList.size()-1; i++) {
+					.get(Recorderv2.gestureCount - 1).NodeList.size() - 1; i++) {
 
 				int x = (int) (Recorderv2.gestureList
 						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
@@ -219,7 +218,7 @@ class Surface extends JPanel {
 			}
 		} else if (finger == true) {
 			for (int i = 1; i < Recorderv2.gestureList
-					.get(Recorderv2.gestureCount - 1).NodeList.size()-1; i++) {
+					.get(Recorderv2.gestureCount - 1).NodeList.size() - 1; i++) {
 
 				int x = (int) (Recorderv2.gestureList
 						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
@@ -278,18 +277,24 @@ class Points extends JFrame {
 		showFinger.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if(finger==false){finger = true; showFinger.setText("show palm coordinates");}
-				else if(finger==true){finger=false; showFinger.setText("show finger coordinates");}
+				if (finger == false) {
+					finger = true;
+					showFinger.setText("show palm coordinates");
+				} else if (finger == true) {
+					finger = false;
+					showFinger.setText("show finger coordinates");
+				}
 				surface.repaint();
 			}
 		});
-	
+
 		add(surface);
 		surface.add(showFinger);
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}
 }
+
 class ActionMapper extends JFrame {
 	JPanel panel = new JPanel();
 	JButton mapButton = new JButton("Map ");
@@ -302,20 +307,19 @@ class ActionMapper extends JFrame {
 	private void initUI() {
 
 		setTitle("ActionMapper");
-		//final Surface surface = new Surface();
+		// final Surface surface = new Surface();
 		mapButton.setBounds(50, 60, 80, 30);
 		mapButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).attribute="XZ";
-				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).action="XZ";
+				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).attribute = "XZ";
+				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).action = "XZ";
 			}
 		});
-	
-		//add(surface);
+
+		// add(surface);
 		panel.add(mapButton);
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}
 }
-
