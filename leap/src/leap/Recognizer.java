@@ -77,31 +77,50 @@ controller.addListener(listener2);
 while(MapperGUI.statusRecognizing==true){
 	frame= controller.frame();
 	for (int i =0; i<gestureList.size();i++){
-		for (int j=1;j<gestureList.get(i).NodeList.size();j++){
-			while(frame.hands().get(0).palmPosition().normalized().getX()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getX()+deviationX ||
+		long timer= System.currentTimeMillis();
+		//System.out.println("timer start"+timer);
+		int matched = 0;
+		for (int j=1;j<gestureList.get(i).NodeList.size();j++){	
+			while(System.currentTimeMillis()<(timer+2000)){
+				//System.out.println("timer inside"+timer);
+				frame= controller.frame();
+			if(frame.hands().get(0).palmPosition().normalized().getX()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getX()+deviationX ||
 					frame.hands().get(0).palmPosition().normalized().getX()<gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getX()-deviationX ||
 					frame.hands().get(0).palmPosition().normalized().getZ()>gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getZ()+deviationZ ||
 					frame.hands().get(0).palmPosition().normalized().getZ()<gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized().getZ()-deviationZ
 					){
-				frame= controller.frame();
-				System.out.println(frame.hands().get(0).palmPosition().normalized());
+			//System.out.println(frame.hands().get(0).palmPosition().normalized());
 		
 			}
-			System.out.println("matched node number"+gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized()+"with "+frame.hands().get(0).palmPosition().normalized());
-			break;
+			else{
+				matched=matched+1;
+			System.out.println("matched node number" +j+" "+gestureList.get(i).NodeList.get(j).frame.hands().get(0).palmPosition().normalized()+"with "+frame.hands().get(0).palmPosition().normalized());
+			timer= System.currentTimeMillis();
+			frame= controller.frame();
+			break;}
+			}
+			if(j!=matched){
+				System.out.println("RECOGNITION CRITICAL FAILURE: timelimit for next node was exceeded");
+				break;}
+			else 
+			System.out.println("matcehd "+matched);
+			
 			
 		}
 	
-		
+		if(matched==gestureList.get(i).NodeList.size()-1)
+			System.out.println("RECOGNITION SUCCESS for gesture number"+i);
 		
 		
 	}
-	//MapperGUI.statusRecognizing=false;
+	MapperGUI.statusRecognizing=false;
+	
 	
 	
 	
 	
 }
+MapperGUI.runningRecognizing=false;
 
 return;
 
