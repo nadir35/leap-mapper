@@ -119,7 +119,7 @@ public class Recorder extends Listener {
 		for (int i=0;i<gestureList.size();i++)
 		{
 			 System.out.println("gesture["+i+"]_nodeList = " +gestureList.get(i).toString());
-			 System.out.println("gesture["+i+"]_key = " +gestureList.get(i).keycode.toString());
+		//	 System.out.println("gesture["+i+"]_key = " +gestureList.get(i).keycode.toString());
 		
 		}
 		return;

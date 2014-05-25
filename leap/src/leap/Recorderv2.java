@@ -107,7 +107,7 @@ class Recorderv2 {
 		gestureCount = i;
 		newGesture = new UserGesture();
 		nodeCount = 0;
-		boolean sta = MapperGUI.status;
+		boolean sta = MapperGUI.statusRecording;
 		Node startnode = new Node();
 		/*
 		 * System.out.println(
@@ -126,7 +126,6 @@ class Recorderv2 {
 			// + frame.hands().get(0).palmVelocity());
 			startPos = frame.hands().get(0).palmPosition();
 			startTime = frame.timestamp();
-
 			startnode.x = startPos.getX();
 			startnode.y = startPos.getY();
 			startnode.z = startPos.getZ();
@@ -142,26 +141,26 @@ class Recorderv2 {
 			System.out.println(nodeCount + "     " + startnode.toString());
 			nodeCount = nodeCount + 1;
 		}
-		while (MapperGUI.status == true) {
+		while (MapperGUI.statusRecording == true) {
 			// System.out.println("	click to node the current position to node["+(newGesture.NodeList.size())+"]");
 			frame = controller.frame();
 			Node newnode = new Node();
 			Thread.sleep(100);
-			while (frame.hands().isEmpty() && MapperGUI.status == true) {
+			while (frame.hands().isEmpty() && MapperGUI.statusRecording == true) {
 				System.out.println("no hands detected");
 				frame = controller.frame();
 				Thread.sleep(1000);
 			}
-			if (MapperGUI.status == false)
+			if (MapperGUI.statusRecording == false)
 				break;
 			currentPos = frame.hands().get(0).palmPosition();
 			// System.out.println("currentpos is " + currentPos);
-			newnode.x = currentPos.getX();
+			newnode.x = currentPos.normalized().getX();
 			newnode.frame= frame;
 					//- newGesture.NodeList.get(newGesture.NodeList.size() - 1).x;
 			newnode.y = 0;
 			// newnode.y=currentPos.getY()-newGesture.NodeList.get(nodeCount-1).y;
-			newnode.z =  currentPos.getZ();
+			newnode.z =  currentPos.normalized().getZ();
 			// newnode.z = currentPos.getZ()
 			// - newGesture.NodeList
 			// .get(newGesture.NodeList.size() - 1).z;
@@ -188,8 +187,8 @@ class Recorderv2 {
 		for (int i1 = 0; i1 < gestureList.size(); i1++) {
 			System.out.println("gesture[" + i1 + "]_nodeList = "
 					+ gestureList.get(i1).toString());
-			System.out.println("gesture[" + i1 + "]_key = "
-					+ gestureList.get(i1).keycode.toString());
+			//System.out.println("gesture[" + i1 + "]_key = "
+			//		+ gestureList.get(i1).keycode.toString());
 
 		}
 		return;

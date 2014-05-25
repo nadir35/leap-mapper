@@ -17,8 +17,10 @@ import javax.swing.SwingUtilities;
 
 public class MapperGUI extends JFrame {
 
-	public static boolean status = false;
-	public static boolean running = false;
+	public static boolean statusRecording = false;
+	public static boolean runningRecording = false;
+	public static boolean statusRecognizing = false;
+	public static boolean runningRecognizing = false;
 
 	public MapperGUI() {
 		// TODO Auto-generated constructor stub
@@ -26,7 +28,10 @@ public class MapperGUI extends JFrame {
 
 		JButton startRecButton = new JButton("Start recording");
 		JButton stopRecButton = new JButton("Stop recordiing");
+		JButton startMapper = new JButton("Assign action to parameters");
 		JButton showPlot = new JButton("Show Plot");
+		JButton startRecog = new JButton("Start Recognition");
+
 
 		getContentPane().add(panel);
 
@@ -37,8 +42,8 @@ public class MapperGUI extends JFrame {
 		startRecButton.setBounds(50, 60, 80, 30);
 		startRecButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
-				status = true;
-				if (running == false) {
+				statusRecording = true;
+				if (runningRecording == false) {
 					final Thread t = new Thread(new Runnable() {
 						public void run() {
 							// this shall get executed, after start() has been
@@ -57,7 +62,7 @@ public class MapperGUI extends JFrame {
 						}
 					});
 					t.start();
-					running = true;
+					runningRecording = true;
 				}
 			}
 		});
@@ -65,8 +70,8 @@ public class MapperGUI extends JFrame {
 		stopRecButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				status = false;
-				running = false;
+				statusRecording = false;
+				runningRecording = false;
 
 			}
 		});
@@ -79,10 +84,49 @@ public class MapperGUI extends JFrame {
 				ps.setVisible(true);
 			}
 		});
+		startMapper.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
 
+			
+				ActionMapper ps = new ActionMapper();
+				ps.setVisible(true);
+			}
+		});
+		startRecog.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				statusRecognizing = true;
+				if (runningRecognizing == false) {
+					final Thread t = new Thread(new Runnable() {
+						public void run() {
+							// this shall get executed, after start() has been
+							// called, outside the EDT
+							try {
+
+								Recognizer.recog(Recorderv2.gestureList,
+										Recognizer.controller);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
+					t.start();
+					runningRecognizing = true;
+				}
+			
+			
+			}
+		});
 		panel.add(startRecButton);
 		panel.add(stopRecButton);
 		panel.add(showPlot);
+		panel.add(startMapper);
+		panel.add(startRecog);
 		// panel2.add(new Surface());
 
 		setSize(600, 400);
@@ -221,3 +265,32 @@ class Points extends JFrame {
 		setLocationRelativeTo(null);
 	}
 }
+class ActionMapper extends JFrame {
+	JPanel panel = new JPanel();
+	JButton mapButton = new JButton("Map ");
+
+	public ActionMapper() {
+		getContentPane().add(panel);
+		initUI();
+	}
+
+	private void initUI() {
+
+		setTitle("ActionMapper");
+		//final Surface surface = new Surface();
+		mapButton.setBounds(50, 60, 80, 30);
+		mapButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).attribute="XZ";
+				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).action="XZ";
+			}
+		});
+	
+		//add(surface);
+		panel.add(mapButton);
+		setSize(750, 750);
+		setLocationRelativeTo(null);
+	}
+}
+
