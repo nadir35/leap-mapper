@@ -1,5 +1,6 @@
 package leap;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -12,23 +13,30 @@ import java.util.Random;
 
 import javax.swing.*;
 
+import com.leapmotion.leap.Controller;
+import com.leapmotion.leap.GestureList;
+
 public class MapperGUI extends JFrame {
 
 	public static boolean statusRecording = false;
 	public static boolean runningRecording = false;
 	public static boolean statusRecognizing = false;
 	public static boolean runningRecognizing = false;
+	public static JLabel noLeap = new JLabel("No Leap connected!!!!");
+	public static Controller controller = new Controller();
+	public static SampleListener2 listener = new SampleListener2();
 
 	public MapperGUI() {
 		// TODO Auto-generated constructor stub
 		JPanel panel = new JPanel();
-
+		controller.addListener(listener);
 		JButton startRecButton = new JButton("Start recording");
 		JButton stopRecButton = new JButton("Stop recordiing");
+		JButton stopRecogButton = new JButton("Stop recorgnizing");
 		final JButton deleteButton = new JButton("delete gesture");
 		JButton startMapper = new JButton("Assign action to parameters");
 		JButton showPlot = new JButton("Show Plot");
-		JButton startRecog = new JButton("Start Recognition");
+		final JButton startRecog = new JButton("Start Recognition");
 
 		getContentPane().add(panel);
 
@@ -43,25 +51,30 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(final ActionEvent e) {
 				statusRecording = true;
 				if (runningRecording == false) {
-					final Thread t = new Thread(new Runnable() {
-						public void run() {
-							// this shall get executed, after start() has been
-							// called, outside the EDT
-							try {
+					if (controller.isConnected()) {
+						final Thread t = new Thread(new Runnable() {
+							public void run() {
+								// this shall get executed, after start() has
+								// been
+								// called, outside the EDT
+								try {
 
-								Recorderv2.record(Recorderv2.gestureCount,
-										Recorderv2.controller);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+									Recorderv2.record(Recorderv2.gestureCount,
+											controller);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
-						}
-					});
-					t.start();
-					runningRecording = true;
+						});
+						t.start();
+						runningRecording = true;
+					} else {
+						System.out.println("no leap connected");
+					}
 				}
 			}
 		});
@@ -95,17 +108,22 @@ public class MapperGUI extends JFrame {
 		showPlot.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-
-				Points ps = new Points();
-				ps.setVisible(true);
+				Points.area=false;
+				Points.finger=false;
+				if(!Recorderv2.gestureList.isEmpty())
+					{Points ps = new Points();
+				Points.area=false;
+				Points.finger=false;
+				ps.setVisible(true);}
+				
 			}
 		});
 		startMapper.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 
-				ActionMapper ps = new ActionMapper();
-				ps.setVisible(true);
+				ActionMapper am = new ActionMapper();
+				am.setVisible(true);
 			}
 		});
 		startRecog.addActionListener(new ActionListener() {
@@ -113,26 +131,39 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				statusRecognizing = true;
 				if (runningRecognizing == false) {
-					final Thread t = new Thread(new Runnable() {
-						public void run() {
-							// this shall get executed, after start() has been
-							// called, outside the EDT
-							try {
+					if (controller.isConnected()) {
+						final Thread t = new Thread(new Runnable() {
+							public void run() {
+								// this shall get executed, after start() has
+								// been
+								// called, outside the EDT
+								try {
 
-								Recognizer.recog(Recorderv2.gestureList,
-										Recognizer.controller);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+									Recognizer.recog(Recorderv2.gestureList,
+											controller);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
-						}
-					});
-					t.start();
-					runningRecognizing = true;
+						});
+						t.start();
+						runningRecognizing = true;
+					} else {
+						System.out.println("no leap connected");
+					}
 				}
+
+			}
+		});
+		stopRecogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				statusRecognizing = false;
+				runningRecognizing = false;
 
 			}
 		});
@@ -143,12 +174,17 @@ public class MapperGUI extends JFrame {
 		panel.add(startMapper);
 		panel.add(startRecog);
 		panel.add(deleteButton);
+		panel.add(stopRecogButton);
+		panel.add(noLeap);
+		noLeap.setVisible(false);
 		startRecButton.setBounds(100, 100, 120, 30);
 		stopRecButton.setBounds(250, 100, 140, 30);
 		showPlot.setBounds(100, 200, 120, 30);
 		startMapper.setBounds(100, 300, 120, 30);
 		startRecog.setBounds(100, 400, 140, 30);
+		stopRecogButton.setBounds(300, 400, 140, 30);
 		deleteButton.setBounds(400, 100, 180, 30);
+		noLeap.setBounds(200, 500, 180, 30);
 		setResizable(false);
 
 		// panel2.add(new Surface());
@@ -175,7 +211,7 @@ public class MapperGUI extends JFrame {
 
 class Surface extends JPanel {
 
-	private void doDrawing(Graphics g, boolean finger) {
+	private void doDrawing(Graphics g, boolean finger, boolean area) {
 
 		Graphics2D g2d = (Graphics2D) g;
 
@@ -215,6 +251,16 @@ class Surface extends JPanel {
 							((size.height) / 2) + y);
 				g2d.drawLine(((size.width) / 2) + x, ((size.height) / 2) + y,
 						((size.width) / 2) + nextX, ((size.height) / 2) + nextY);
+				if(area==true){
+					g2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y+Recognizer.deviationZ*300/2),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2));
+					
+					
+					g2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y+Recognizer.deviationZ*300/2));
+				//g2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
+				//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + nextY-Recognizer.deviationZ*300/2));
+					}
 			}
 		} else if (finger == true) {
 			for (int i = 1; i < Recorderv2.gestureList
@@ -255,14 +301,18 @@ class Surface extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		super.paintComponent(g);
-		doDrawing(g, Points.finger);
+		doDrawing(g, Points.finger, Points.area);
 	}
 
 }
 
 class Points extends JFrame {
 	public static boolean finger = false;
+	public static boolean area = false;
 	JButton showFinger = new JButton("show finger coordinates");
+	JButton deleteFirst = new JButton("delete First node");
+	JButton deleteLast = new JButton("delete Last node");
+	JButton showArea = new JButton("show recognition area (beta");
 
 	public Points() {
 
@@ -287,9 +337,44 @@ class Points extends JFrame {
 				surface.repaint();
 			}
 		});
+		deleteFirst.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
+						.remove(0);
 
+				surface.repaint();
+			}
+		});
+		deleteLast.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
+						.remove(Recorderv2.gestureList
+								.get(Recorderv2.gestureCount - 1).NodeList
+								.size() - 1);
+				surface.repaint();
+			}
+		});
+		showArea.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (area == false) {
+					area = true;
+					showArea.setText("hide area");
+				} else if (area == true) {
+					area= false;
+					showArea.setText("show area");
+				}	
+
+				surface.repaint();
+			}
+		});
 		add(surface);
 		surface.add(showFinger);
+		surface.add(deleteFirst);
+		surface.add(deleteLast);
+		surface.add(showArea);
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}

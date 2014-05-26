@@ -17,12 +17,14 @@ class SampleListener2 extends Listener {
 
 	public void onInit(Controller controller) {
 		System.out.println("Initialized");
+		
 	}
 
 	public void onConnect(Controller controller) {
 		System.out.println("Connected");
-		Date now = new Date();
-		System.out.println(now);
+		MapperGUI.noLeap.setVisible(false);
+		//Date now = new Date();
+		//System.out.println(now);
 		/*
 		 * controller.enableGesture(UserGesture.Type.TYPE_SWIPE);
 		 * controller.enableGesture(UserGesture.Type.TYPE_CIRCLE);
@@ -34,6 +36,9 @@ class SampleListener2 extends Listener {
 	public void onDisconnect(Controller controller) {
 		// Note: not dispatched when running in a debugger.
 		System.out.println("Disconnected");
+		MapperGUI.noLeap.setVisible(true);
+		MapperGUI.statusRecording = false;
+		MapperGUI.statusRecognizing = false;
 	}
 
 	public void onExit(Controller controller) {
@@ -42,8 +47,8 @@ class SampleListener2 extends Listener {
 
 	public void onFrame(Controller controller) {
 		// Get the most recent frame and report some basic information
-		Frame frame = controller.frame();
-		Date now = new Date();
+	//	Frame frame = controller.frame();
+	//	Date now = new Date();
 
 	}
 
@@ -51,8 +56,8 @@ class SampleListener2 extends Listener {
 
 class Recorderv2 {
 
-	public static Controller controller = new Controller();
-	public static SampleListener2 listener = new SampleListener2();
+	//public static Controller controller = new Controller();
+	//public static SampleListener2 listener = new SampleListener2();
 	static Vector startPos = new Vector();
 	static Vector currentPos = new Vector();
 	static long startTime;
@@ -69,7 +74,7 @@ class Recorderv2 {
 		// Create a sample listener and controller
 
 		// Have the sample listener receive events from the controller
-		controller.addListener(listener);
+	//	controller.addListener(listener);
 
 		// Keep this process running until Enter is pressed
 		System.out.println("Type exit to quit...");
@@ -87,14 +92,14 @@ class Recorderv2 {
 				break;
 			} else if (input.equals("r")) {
 				gesturecount = gesturecount + 1;
-				record(gesturecount, controller);
+			//	record(gesturecount, controller);
 				System.out.println("\n \n \n \n \n");
 				System.out.println("Type exit to quit...");
 				System.out.println("Press R to record new gesture \n");
 			}
 
 			// Remove the sample listener when done
-			 controller.removeListener(listener);
+		//	 controller.removeListener(listener);
 
 		}
 
@@ -145,11 +150,11 @@ class Recorderv2 {
 			// System.out.println("	click to node the current position to node["+(newGesture.NodeList.size())+"]");
 			frame = controller.frame();
 			Node newnode = new Node();
-			Thread.sleep(50);
+			Thread.sleep(5);
 			while (frame.hands().isEmpty() && MapperGUI.statusRecording == true) {
-				System.out.println("no hands detected");
+				//System.out.println("no hands detected");
 				frame = controller.frame();
-				Thread.sleep(1000);
+				Thread.sleep(20);
 			}
 			if (MapperGUI.statusRecording == false)
 				break;

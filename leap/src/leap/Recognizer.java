@@ -10,42 +10,10 @@ import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Frame;
 import com.leapmotion.leap.Listener;
 
-class SampleListener3 extends Listener {
 
-	public void onInit(Controller controller) {
-		System.out.println("Initialized");
-	}
-
-	public void onConnect(Controller controller) {
-		System.out.println("Connected");
-		Date now = new Date();
-		System.out.println(now);
-		/*
-		 * controller.enableGesture(UserGesture.Type.TYPE_SWIPE);
-		 * controller.enableGesture(UserGesture.Type.TYPE_CIRCLE);
-		 * controller.enableGesture(UserGesture.Type.TYPE_SCREEN_TAP);
-		 * controller.enableGesture(UserGesture.Type.TYPE_KEY_TAP);
-		 */
-	}
-
-	public void onDisconnect(Controller controller) {
-		// Note: not dispatched when running in a debugger.
-		System.out.println("Disconnected");
-	}
-
-	public void onExit(Controller controller) {
-		System.out.println("Exited");
-	}
-
-	public void onFrame(Controller controller) {
-		// Get the most recent frame and report some basic information
-
-	}
-
-}
 
  class Recognizer {
-	public static Controller controller = new Controller();
+	//public static Controller controller = new Controller();
 	// private static SampleListener listener = new SampleListener();
 	public static float deviationX = 0.10F;
 	public static float deviationZ = 0.10F;
@@ -70,8 +38,11 @@ class SampleListener3 extends Listener {
 
 		long[] timer = new long[gestureList.size()];
 		int[] matched = new int[gestureList.size()];
+		int dot=0;
 
 		while (MapperGUI.statusRecognizing == true) {
+			//if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
+			//else {dot=0;System.out.print("\b \b \b");}
 			frame = controller.frame();
 			Thread.sleep(5);
 			for (int gestureIterator = 0; gestureIterator < gestureList.size(); gestureIterator++) {
@@ -134,9 +105,12 @@ class SampleListener3 extends Listener {
 							+ gestureIterator + " , action goes here");
 
 			}
+			if (MapperGUI.statusRecognizing == false)
+				break;
 		}
-
-		MapperGUI.runningRecognizing = false;
+	
+		System.out.println("stopped recog");
+		//MapperGUI.runningRecognizing = false;
 
 		return;
 
