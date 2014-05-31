@@ -15,6 +15,7 @@ import javax.swing.*;
 
 import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.GestureList;
+import com.leapmotion.leap.Leap;
 
 public class MapperGUI extends JFrame {
 
@@ -36,6 +37,7 @@ public class MapperGUI extends JFrame {
 		final JButton deleteButton = new JButton("delete gesture");
 		JButton startMapper = new JButton("Assign action to parameters");
 		JButton showPlot = new JButton("Show Plot");
+		JButton showFPS = new JButton("show FPS");
 		final JButton startRecog = new JButton("Start Recognition");
 
 		getContentPane().add(panel);
@@ -118,6 +120,18 @@ public class MapperGUI extends JFrame {
 				
 			}
 		});
+		showFPS.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+
+	
+				if(!Recorderv2.gestureList.isEmpty())
+					{FPS fps = new FPS();
+	
+				fps.setVisible(true);}
+				
+			}
+		});
 		startMapper.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -176,6 +190,7 @@ public class MapperGUI extends JFrame {
 		panel.add(deleteButton);
 		panel.add(stopRecogButton);
 		panel.add(noLeap);
+		panel.add(showFPS);
 		noLeap.setVisible(false);
 		startRecButton.setBounds(100, 100, 120, 30);
 		stopRecButton.setBounds(250, 100, 140, 30);
@@ -183,6 +198,7 @@ public class MapperGUI extends JFrame {
 		startMapper.setBounds(100, 300, 120, 30);
 		startRecog.setBounds(100, 400, 140, 30);
 		stopRecogButton.setBounds(300, 400, 140, 30);
+		showFPS.setBounds(300, 200, 140, 30);
 		deleteButton.setBounds(400, 100, 180, 30);
 		noLeap.setBounds(200, 500, 180, 30);
 		setResizable(false);
@@ -214,8 +230,10 @@ class Surface extends JPanel {
 	private void doDrawing(Graphics g, boolean finger, boolean area) {
 
 		Graphics2D g2d = (Graphics2D) g;
+		Graphics2D a2d = (Graphics2D) g;
 
 		g2d.setColor(Color.blue);
+	
 
 		Dimension size = getSize();
 		Insets insets = getInsets();
@@ -230,9 +248,9 @@ class Surface extends JPanel {
 				int x = (int) (Recorderv2.gestureList
 						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
 						.hands().get(0).palmPosition().getX() % w);
-				int y = (int) (Recorderv2.gestureList
+				int y = (int) -(Recorderv2.gestureList
 						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
-						.hands().get(0).palmPosition().getZ() % h);
+						.hands().get(0).palmPosition().getY() % h);
 				int nextX = 0;
 				int nextY = 0;
 				if (Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
@@ -241,25 +259,31 @@ class Surface extends JPanel {
 							.get(Recorderv2.gestureCount - 1).NodeList
 							.get(i + 1).frame.hands().get(0).palmPosition()
 							.getX() % w);
-					nextY = (int) (Recorderv2.gestureList
+					nextY = (int) -(Recorderv2.gestureList
 							.get(Recorderv2.gestureCount - 1).NodeList
 							.get(i + 1).frame.hands().get(0).palmPosition()
-							.getZ() % h);
+							.getY() % h);
+					
 				}
-				if (i % 10 == 1)
+				if (i % 10 == 1){
+					
 					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
-							((size.height) / 2) + y);
-				g2d.drawLine(((size.width) / 2) + x, ((size.height) / 2) + y,
-						((size.width) / 2) + nextX, ((size.height) / 2) + nextY);
+							((size.height)) + y);}
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)) + y,
+						((size.width) / 2) + nextX, ((size.height)) + nextY);
 				if(area==true){
-					g2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y+Recognizer.deviationZ*300/2),
-							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2));
-					
-					
-					g2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
-							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y+Recognizer.deviationZ*300/2));
+					g2d.setColor(Color.red);
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2));
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2));
+				//	a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
+				//			(int) (((size.width) / 2) + nextX+Recognizer.deviationX*300/2),(int) (((size.height)) + nextY+Recognizer.deviationZ*300/2));
+				//	a2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
+					//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height)) + nextY-Recognizer.deviationZ*300/2));
 				//g2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
 				//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + nextY-Recognizer.deviationZ*300/2));
+					g2d.setColor(Color.blue);
 					}
 			}
 		} else if (finger == true) {
@@ -270,10 +294,10 @@ class Surface extends JPanel {
 						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
 						.hands().get(0).fingers().frontmost().tipPosition()
 						.getX() % w);
-				int y = (int) (Recorderv2.gestureList
+				int y = (int) -(Recorderv2.gestureList
 						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
 						.hands().get(0).fingers().frontmost().tipPosition()
-						.getZ() % h);
+						.getY() % h);
 				int nextX = 0;
 				int nextY = 0;
 				if (Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
@@ -282,16 +306,25 @@ class Surface extends JPanel {
 							.get(Recorderv2.gestureCount - 1).NodeList
 							.get(i + 1).frame.hands().get(0).fingers()
 							.frontmost().tipPosition().getX() % w);
-					nextY = (int) (Recorderv2.gestureList
+					nextY = -(int) (Recorderv2.gestureList
 							.get(Recorderv2.gestureCount - 1).NodeList
 							.get(i + 1).frame.hands().get(0).fingers()
-							.frontmost().tipPosition().getZ() % h);
+							.frontmost().tipPosition().getY() % h);
 				}
 				if (i % 10 == 1)
 					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
-							((size.height) / 2) + y);
-				g2d.drawLine(((size.width) / 2) + x, ((size.height) / 2) + y,
-						((size.width) / 2) + nextX, ((size.height) / 2) + nextY);
+							((size.height)) + y);
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)) + y,
+						((size.width) / 2) + nextX, ((size.height)) + nextY);
+			
+			if(area==true){
+				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
+						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2));
+				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
+						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) ) + y+Recognizer.deviationZ*300/2));
+			//g2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
+			//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + nextY-Recognizer.deviationZ*300/2));
+				}
 			}
 		}
 
@@ -302,6 +335,7 @@ class Surface extends JPanel {
 
 		super.paintComponent(g);
 		doDrawing(g, Points.finger, Points.area);
+		
 	}
 
 }
@@ -407,4 +441,64 @@ class ActionMapper extends JFrame {
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}
+}
+class FPS extends JFrame {
+
+
+	public FPS() {
+
+		initUI();
+	}
+
+	private void initUI() {
+
+		setTitle("FPS");
+		final FPSGraph surface = new FPSGraph();
+		
+		add(surface);
+		setSize(750, 750);
+		setLocationRelativeTo(null);
+	}
+}
+class FPSGraph extends JPanel {
+
+	private void doDrawing(Graphics g, boolean finger, boolean area) {
+
+		Graphics2D g2d = (Graphics2D) g;
+
+		g2d.setColor(Color.blue);
+
+		Dimension size = getSize();
+		Insets insets = getInsets();
+
+		int w = size.width - insets.left - insets.right;
+		int h = size.height - insets.top - insets.bottom;
+
+		for(int i=0;i<Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList.size()-1;i++){
+			float factor=((float)w/(float)(Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList.size()-1));
+			int x = (int) ((float)i*factor);
+			System.out.println(factor);
+			int y = (int) (Recorderv2.gestureList
+					
+					.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame.currentFramesPerSecond() % h);
+
+
+			if (i % 500 == 1)
+				g2d.drawString(Integer.toString((int) (Recorderv2.gestureList
+						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame.currentFramesPerSecond() % h)), x,
+						((size.height) / 2) - y);
+	
+				g2d.drawLine( x, ((size.height) / 2) - y*4,
+					x, ((size.height) / 2) - y*4);
+		}
+
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+
+		super.paintComponent(g);
+		doDrawing(g, Points.finger, Points.area);
+	}
+
 }

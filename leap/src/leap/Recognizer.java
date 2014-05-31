@@ -49,45 +49,37 @@ import com.leapmotion.leap.Listener;
 				// System.out.println("timer start"+timer);
 				for (int nodeIterator = matched[gestureIterator] + 1; nodeIterator < gestureList
 						.get(gestureIterator).NodeList.size();) {
-					if (System.currentTimeMillis() < (timer[gestureIterator] + 2000)
+					if (System.currentTimeMillis() < (timer[gestureIterator] + 100)
 							|| timer[gestureIterator] == 0) {
 						// System.out.println("timer inside"+timer);
-						if (frame.hands().get(0).palmPosition().normalized()
-								.getX() < gestureList.get(gestureIterator).NodeList
-								.get(nodeIterator).frame.hands().get(0)
-								.palmPosition().normalized().getX()
+						if (frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getX() < gestureList.get(gestureIterator).NodeList
+								.get(nodeIterator).frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getX()
 								+ deviationX
-								&& frame.hands().get(0).palmPosition()
+								&& frame.hands().get(0).fingers().frontmost().tipPosition()
 								.normalized().getX() > gestureList
 								.get(gestureIterator).NodeList
-								.get(nodeIterator).frame.hands().get(0)
-								.palmPosition().normalized().getX()
+								.get(nodeIterator).frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getX()
 								- deviationX
-								&& frame.hands().get(0).palmPosition()
-								.normalized().getZ() < gestureList
+								&& frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getY() < gestureList
 								.get(gestureIterator).NodeList
-								.get(nodeIterator).frame.hands().get(0)
-								.palmPosition().normalized().getZ()
+								.get(nodeIterator).frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getY()
 								+ deviationZ
-								&& frame.hands().get(0).palmPosition()
-								.normalized().getZ() > gestureList
+								&& frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getY() > gestureList
 								.get(gestureIterator).NodeList
-								.get(nodeIterator).frame.hands().get(0)
-								.palmPosition().normalized().getZ()
+								.get(nodeIterator).frame.hands().get(0).fingers().frontmost().tipPosition()
+								.normalized().getY()
 								- deviationZ) {
 							// System.out.println(frame.hands().get(0).palmPosition().normalized());
 							matched[gestureIterator] = nodeIterator;
 							timer[gestureIterator] = System.currentTimeMillis();
-							System.out.println("matched node number "
-									+ nodeIterator
-									+ " of gesture "
-									+ gestureIterator
-									+ " with "
-									+ gestureList.get(gestureIterator).NodeList
-									.get(nodeIterator).frame.hands()
-									.get(0).palmPosition().normalized()
-									+ "with "
-									+ frame.hands().get(0).palmPosition()
+							System.out.println("matched node number "+ nodeIterator+ " of gesture "+ gestureIterator+ " with "+ gestureList.get(gestureIterator).NodeList.get(nodeIterator).frame.hands().get(0).fingers().frontmost().tipPosition()
+									.normalized()+ "with "+ frame.hands().get(0).fingers().frontmost().tipPosition()
 									.normalized());
 							break;
 						} else
@@ -99,10 +91,20 @@ import com.leapmotion.leap.Listener;
 					}
 				}
 				if (matched[gestureIterator] == gestureList
-						.get(gestureIterator).NodeList.size())
-					System.out
-					.println("RECOGNITION SUCCESS for gesture number "
-							+ gestureIterator + " , action goes here");
+						.get(gestureIterator).NodeList.size()-1){
+					
+					if (gestureIterator==0){
+						System.out.println("A");}
+					else if(gestureIterator==1){
+						System.out.println("B");}
+					else if(gestureIterator==2){
+						System.out.println("C");}
+				
+					//System.out.println("RECOGNITION SUCCESS for gesture number "+ gestureIterator + " , action goes here");
+					matched[gestureIterator]=0;
+					timer[gestureIterator] = 0;
+					break;
+					}
 
 			}
 			if (MapperGUI.statusRecognizing == false)

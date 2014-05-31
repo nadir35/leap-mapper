@@ -2,12 +2,20 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry exported="true" kind="lib" path="lib/LeapJava.jar">
+	<classpathentry exported="true" kind="lib" path="lib/LeapJava.jar" sourcepath="C:/Users/Nadir/Desktop/LeapDeveloperKit/LeapSDK/lib/LeapJava.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Nadir/Desktop/LeapDeveloperKit/LeapSDK/lib/x64"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Nadir/Desktop/LeapDeveloperKit/LeapSDK/lib/x64"/>
+	<classpathentry exported="true" kind="lib" path="lib">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Nadir/Desktop/LeapDeveloperKit/LeapSDK/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Nadir/Desktop/LeapDeveloperKit/LeapSDK/lib/x64">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Nadir/Desktop/LeapDeveloperKit/LeapSDK/lib/x64"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

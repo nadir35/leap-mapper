@@ -160,7 +160,7 @@ class Recorderv2 {
 				break;
 			currentPos = frame.hands().get(0).palmPosition();
 			// System.out.println("currentpos is " + currentPos);
-			newnode.x = currentPos.normalized().getX();
+			newnode.x = currentPos.getX();
 			newnode.frame= frame;
 					//- newGesture.NodeList.get(newGesture.NodeList.size() - 1).x;
 			newnode.y = 0;
