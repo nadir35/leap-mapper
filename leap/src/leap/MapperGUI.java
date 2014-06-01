@@ -8,9 +8,15 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
+import javax.sound.midi.Receiver;
 import javax.swing.*;
 
 import com.leapmotion.leap.Controller;
@@ -23,7 +29,7 @@ public class MapperGUI extends JFrame {
 	public static boolean runningRecording = false;
 	public static boolean statusRecognizing = false;
 	public static boolean runningRecognizing = false;
-	public static JLabel noLeap = new JLabel("No Leap connected!!!!");
+	public static JLabel statusLabel = new JLabel("Status: ");
 	public static Controller controller = new Controller();
 	public static SampleListener2 listener = new SampleListener2();
 
@@ -39,7 +45,8 @@ public class MapperGUI extends JFrame {
 		JButton showPlot = new JButton("Show Plot");
 		JButton showFPS = new JButton("show FPS");
 		final JButton startRecog = new JButton("Start Recognition");
-
+		JButton loadGestures = new JButton("load gestures");
+		JButton saveGestures = new JButton("save gestures");
 		getContentPane().add(panel);
 
 		setTitle("LeapRecorder");
@@ -74,6 +81,8 @@ public class MapperGUI extends JFrame {
 						});
 						t.start();
 						runningRecording = true;
+						statusLabel.setText("Status: Recording");
+						statusLabel.setVisible(true);
 					} else {
 						System.out.println("no leap connected");
 					}
@@ -86,6 +95,7 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				statusRecording = false;
 				runningRecording = false;
+				statusLabel.setText("Status: ");
 				deleteButton.setText("delete gesture nr. "
 						+ Recorderv2.gestureCount);
 
@@ -105,6 +115,45 @@ public class MapperGUI extends JFrame {
 				}
 				if (Recorderv2.gestureCount == 0)
 					deleteButton.setText("no gestures to delete");
+			}
+		});
+		saveGestures.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				  try
+			      {
+			         FileOutputStream fileOut =
+			         new FileOutputStream("c:\\temp/gestures.ser");
+			         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			         out.writeObject(Recorderv2.gestureList);
+			         out.close();
+			         fileOut.close();
+			         System.out.printf("Serialized data is saved in c:\\temp/employee.ser");
+			      }catch(IOException i)
+			      {
+			          i.printStackTrace();
+			      }
+			}
+		});
+		loadGestures.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try
+			      {
+			         FileInputStream fileIn = new FileInputStream("c:\\temp/gestures.ser");
+			         ObjectInputStream in = new ObjectInputStream(fileIn);
+			         Recorderv2.gestureList = (ArrayList<UserGesture>) in.readObject();
+			         in.close();
+			         fileIn.close();
+			      }catch(IOException i)
+			      {
+			         i.printStackTrace();
+			         return;
+			      } catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		showPlot.addActionListener(new ActionListener() {
@@ -138,6 +187,12 @@ public class MapperGUI extends JFrame {
 
 				ActionMapper am = new ActionMapper();
 				am.setVisible(true);
+				if(Recorderv2.gestureCount!=0){
+					am.map_propListModel.clear();
+					Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.clear();
+					am.map_actionListModel.clear();
+					Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.clear();
+				}
 			}
 		});
 		startRecog.addActionListener(new ActionListener() {
@@ -166,6 +221,7 @@ public class MapperGUI extends JFrame {
 						});
 						t.start();
 						runningRecognizing = true;
+						statusLabel.setText("Status: Recognizing");
 					} else {
 						System.out.println("no leap connected");
 					}
@@ -178,7 +234,7 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				statusRecognizing = false;
 				runningRecognizing = false;
-
+				statusLabel.setText("Status: ");
 			}
 		});
 
@@ -189,9 +245,11 @@ public class MapperGUI extends JFrame {
 		panel.add(startRecog);
 		panel.add(deleteButton);
 		panel.add(stopRecogButton);
-		panel.add(noLeap);
+		panel.add(statusLabel);
 		panel.add(showFPS);
-		noLeap.setVisible(false);
+		panel.add(saveGestures);
+		panel.add(loadGestures);
+		statusLabel.setVisible(false);
 		startRecButton.setBounds(100, 100, 120, 30);
 		stopRecButton.setBounds(250, 100, 140, 30);
 		showPlot.setBounds(100, 200, 120, 30);
@@ -200,7 +258,9 @@ public class MapperGUI extends JFrame {
 		stopRecogButton.setBounds(300, 400, 140, 30);
 		showFPS.setBounds(300, 200, 140, 30);
 		deleteButton.setBounds(400, 100, 180, 30);
-		noLeap.setBounds(200, 500, 180, 30);
+		saveGestures.setBounds(500, 300, 100, 30);
+		loadGestures.setBounds(600, 300, 100, 30);
+		statusLabel.setBounds(200, 500, 180, 30);
 		setResizable(false);
 
 		// panel2.add(new Surface());
@@ -246,37 +306,34 @@ class Surface extends JPanel {
 					.get(Recorderv2.gestureCount - 1).NodeList.size() - 1; i++) {
 
 				int x = (int) (Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
-						.hands().get(0).palmPosition().getX() % w);
+						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_x_denorm % w);
 				int y = (int) -(Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
-						.hands().get(0).palmPosition().getY() % h);
+						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_y_denorm % h);
 				int nextX = 0;
 				int nextY = 0;
 				if (Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
 						.size() != (i + 1)) {
 					nextX = (int) (Recorderv2.gestureList
 							.get(Recorderv2.gestureCount - 1).NodeList
-							.get(i + 1).frame.hands().get(0).palmPosition()
-							.getX() % w);
+							.get(i + 1).hand0_x_denorm % w);
 					nextY = (int) -(Recorderv2.gestureList
 							.get(Recorderv2.gestureCount - 1).NodeList
-							.get(i + 1).frame.hands().get(0).palmPosition()
-							.getY() % h);
+							.get(i + 1).hand0_y_denorm % h);
 					
 				}
 				if (i % 10 == 1){
 					
 					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
-							((size.height)) + y);}
-				g2d.drawLine(((size.width) / 2) + x, ((size.height)) + y,
-						((size.width) / 2) + nextX, ((size.height)) + nextY);
+							((size.height)/2) + y);
+					}
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)/2) + y,
+						((size.width) / 2) + nextX, ((size.height)/2) + nextY);
 				if(area==true){
 					g2d.setColor(Color.red);
-					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
-							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2));
-					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
-							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2));
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y+Recognizer.deviationY*300/2),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2));
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2) + y+Recognizer.deviationY*300/2));
 				//	a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
 				//			(int) (((size.width) / 2) + nextX+Recognizer.deviationX*300/2),(int) (((size.height)) + nextY+Recognizer.deviationZ*300/2));
 				//	a2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
@@ -291,39 +348,35 @@ class Surface extends JPanel {
 					.get(Recorderv2.gestureCount - 1).NodeList.size() - 1; i++) {
 
 				int x = (int) (Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
-						.hands().get(0).fingers().frontmost().tipPosition()
-						.getX() % w);
+						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_x_denorm % w);
 				int y = (int) -(Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame
-						.hands().get(0).fingers().frontmost().tipPosition()
-						.getY() % h);
+						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_y_denorm % h);
 				int nextX = 0;
 				int nextY = 0;
 				if (Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
 						.size() != (i + 1)) {
 					nextX = (int) (Recorderv2.gestureList
 							.get(Recorderv2.gestureCount - 1).NodeList
-							.get(i + 1).frame.hands().get(0).fingers()
-							.frontmost().tipPosition().getX() % w);
+							.get(i + 1).hand0_x_denorm % w);
 					nextY = -(int) (Recorderv2.gestureList
 							.get(Recorderv2.gestureCount - 1).NodeList
-							.get(i + 1).frame.hands().get(0).fingers()
-							.frontmost().tipPosition().getY() % h);
+							.get(i + 1).hand0_y_denorm % h);
 				}
 				if (i % 10 == 1)
 					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
-							((size.height)) + y);
-				g2d.drawLine(((size.width) / 2) + x, ((size.height)) + y,
-						((size.width) / 2) + nextX, ((size.height)) + nextY);
+							((size.height)/2) + y);
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)/2) + y,
+						((size.width) / 2) + nextX, ((size.height)/2) + nextY);
 			
 			if(area==true){
-				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
-						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2));
-				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
-						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) ) + y+Recognizer.deviationZ*300/2));
+				g2d.setColor(Color.red);
+				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y+Recognizer.deviationY*300/2),
+						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2));
+				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2),
+						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2 ) + y+Recognizer.deviationY*300/2));
 			//g2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
 			//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + nextY-Recognizer.deviationZ*300/2));
+				g2d.setColor(Color.blue);
 				}
 			}
 		}
@@ -417,6 +470,23 @@ class Points extends JFrame {
 class ActionMapper extends JFrame {
 	JPanel panel = new JPanel();
 	JButton mapButton = new JButton("Map ");
+	JButton propAddButton = new JButton("add property ");
+	JButton actionAddButton = new JButton("add action");
+	JButton resetButton = new JButton("reset");
+	public String[] available_props = new String[]{"A", "B"};
+	public String[] available_actions = new String[]{"C", "D"};
+	public JList<String> propList;
+	public JList<String> map_propList;
+	public JList<String> actionList;
+	public JList<String> map_actionList;
+	public JScrollPane propListScroller;
+	public JScrollPane map_propListScroller;
+	public JScrollPane actionListScroller;
+	public JScrollPane map_actionListScroller;
+	public DefaultListModel<String> propListModel = new DefaultListModel<String>();
+	public DefaultListModel<String> actionListModel = new DefaultListModel<String>();
+	public DefaultListModel<String> map_propListModel = new DefaultListModel<String>();
+	public DefaultListModel<String> map_actionListModel = new DefaultListModel<String>();
 
 	public ActionMapper() {
 		getContentPane().add(panel);
@@ -427,17 +497,103 @@ class ActionMapper extends JFrame {
 
 		setTitle("ActionMapper");
 		// final Surface surface = new Surface();
-		mapButton.setBounds(50, 60, 80, 30);
+	
+		panel.setLayout(null);
+		propListModel.addElement("XY");
+	    propListModel.addElement("b");
+	    propListModel.addElement("c");
+	    propListModel.addElement("d");
+		actionListModel.addElement("e");
+	    actionListModel.addElement("f");
+	    actionListModel.addElement("g");
+	    actionListModel.addElement("e");
+	        
+	    
+	
+	    propList = new JList<String>(propListModel);    
+		propList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		propList.setLayoutOrientation(JList.VERTICAL);
+		propList.setVisibleRowCount(3);
+		propListScroller = new JScrollPane(propList);
+		actionList = new JList<String>(actionListModel);    
+		actionList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		actionList.setLayoutOrientation(JList.VERTICAL);
+		actionList.setVisibleRowCount(3);
+		actionListScroller = new JScrollPane(actionList);
+		map_propList = new JList<String>(map_propListModel);    
+		map_propList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		map_propList.setLayoutOrientation(JList.VERTICAL);
+		map_propList.setVisibleRowCount(3);
+		map_propListScroller = new JScrollPane(map_propList);
+		map_actionList = new JList<String>(map_actionListModel);    
+		map_actionList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		map_actionList.setLayoutOrientation(JList.VERTICAL);
+		map_actionList.setVisibleRowCount(3);
+		map_actionListScroller = new JScrollPane(map_actionList);
+	    
+		
+		
+		
+		
+		
+		mapButton.setBounds(300, 600, 100, 30);
+		propAddButton.setBounds(100, 500, 100, 30);
+		actionAddButton.setBounds(550, 500, 100, 30);
+		resetButton.setBounds(400, 600, 100, 30);
 		mapButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).attribute = "XZ";
-				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).action = "XZ";
+				// assign action and properties to gesture
+				if(Recorderv2.gestureCount!=0){
+				for(int i=0;i<map_propListModel.size();i++){
+					if((Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.size()==0) || (Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.size()!=map_propListModel.size() ))	
+						Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.add(i, map_propListModel.get(i).toString());}
+				for(int i=0;i<map_actionListModel.size();i++){
+					if((Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.size()==0) || (Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.size()!=map_actionListModel.size() ))	
+						Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.add(i, map_actionListModel.get(i).toString());}
+				System.out.print(Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.toString());
+				System.out.println("    "+Recorderv2.gestureList.get(+Recorderv2.gestureCount-1).actions.toString());
+				}}
+		});
+		propAddButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				 map_propListModel.addElement(propList.getSelectedValue().toString());
+				
 			}
 		});
-
+		actionAddButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				 map_actionListModel.addElement(actionList.getSelectedValue().toString());
+				
+			}
+		});
+		resetButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if(Recorderv2.gestureCount!=0){
+				map_propListModel.clear();
+				Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.clear();
+				map_actionListModel.clear();
+				Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.clear();
+			}}
+		});
 		// add(surface);
 		panel.add(mapButton);
+		panel.add(propAddButton);
+		panel.add(actionAddButton);
+		panel.add(resetButton);
+		propListScroller.setBounds(50, 100, 100,300);
+		map_propListScroller.setBounds(270, 100, 100,300);
+		actionListScroller.setBounds(600, 100, 100,300);
+		map_actionListScroller.setBounds(380, 100, 100,300);
+		//panel.add(list);
+		panel.add(propListScroller);
+		panel.add(map_propListScroller);
+		panel.add(actionListScroller);
+		panel.add(map_actionListScroller);
+		
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}
@@ -474,23 +630,7 @@ class FPSGraph extends JPanel {
 		int w = size.width - insets.left - insets.right;
 		int h = size.height - insets.top - insets.bottom;
 
-		for(int i=0;i<Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList.size()-1;i++){
-			float factor=((float)w/(float)(Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList.size()-1));
-			int x = (int) ((float)i*factor);
-			System.out.println(factor);
-			int y = (int) (Recorderv2.gestureList
-					
-					.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame.currentFramesPerSecond() % h);
 
-
-			if (i % 500 == 1)
-				g2d.drawString(Integer.toString((int) (Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).frame.currentFramesPerSecond() % h)), x,
-						((size.height) / 2) - y);
-	
-				g2d.drawLine( x, ((size.height) / 2) - y*4,
-					x, ((size.height) / 2) - y*4);
-		}
 
 	}
 

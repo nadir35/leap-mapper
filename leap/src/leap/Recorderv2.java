@@ -22,7 +22,7 @@ class SampleListener2 extends Listener {
 
 	public void onConnect(Controller controller) {
 		System.out.println("Connected");
-		MapperGUI.noLeap.setVisible(false);
+		MapperGUI.statusLabel.setVisible(false);
 		//Date now = new Date();
 		//System.out.println(now);
 		/*
@@ -36,7 +36,7 @@ class SampleListener2 extends Listener {
 	public void onDisconnect(Controller controller) {
 		// Note: not dispatched when running in a debugger.
 		System.out.println("Disconnected");
-		MapperGUI.noLeap.setVisible(true);
+		MapperGUI.statusLabel.setVisible(true);
 		MapperGUI.statusRecording = false;
 		MapperGUI.statusRecognizing = false;
 	}
@@ -121,51 +121,59 @@ class Recorderv2 {
 		 * InputStreamReader( System.in)); String input = null; input =
 		 * bufferRead.readLine().toString();
 		 */
-		if (sta == true) {
-			Frame frame = controller.frame();
-			System.out
-					.println("\n \n \n \n \n \n //////////////////////////////////////////////////////////////////// \n");
-			System.out.println("Starting recording gesture number "
-					+ gestureCount);
-			// System.out.println("hand palmvelocity "
-			// + frame.hands().get(0).palmVelocity());
-			startPos = frame.hands().get(0).palmPosition();
-			startTime = frame.timestamp();
-			startnode.x = startPos.getX();
-			startnode.y = startPos.getY();
-			startnode.z = startPos.getZ();
-			startnode.frame= frame;
-			startnode.timestamp = System.currentTimeMillis();
-			if (newGesture.NodeList.isEmpty()) {
-				// System.out.println("list 0, adding startnode");
-				newGesture.NodeList.add(nodeCount, startnode);
-			}
 
-			System.out
-					.println("Started recording. starting pos is " + startPos);
-			System.out.println(nodeCount + "     " + startnode.toString());
-			nodeCount = nodeCount + 1;
-		}
 		while (MapperGUI.statusRecording == true) {
+			
 			// System.out.println("	click to node the current position to node["+(newGesture.NodeList.size())+"]");
 			frame = controller.frame();
 			Node newnode = new Node();
-			Thread.sleep(5);
+			Thread.sleep(10);
 			while (frame.hands().isEmpty() && MapperGUI.statusRecording == true) {
 				//System.out.println("no hands detected");
 				frame = controller.frame();
-				Thread.sleep(20);
+				Thread.sleep(10);
 			}
 			if (MapperGUI.statusRecording == false)
 				break;
+			if (newGesture.NodeList.isEmpty()) {
+				Frame frame = controller.frame();
+				System.out
+						.println("\n \n \n \n \n \n //////////////////////////////////////////////////////////////////// \n");
+				System.out.println("Starting recording gesture number "
+						+ gestureCount);
+				// System.out.println("hand palmvelocity "
+				// + frame.hands().get(0).palmVelocity());
+				startPos = frame.hands().get(0).palmPosition();
+				startTime = frame.timestamp();
+
+
+				startnode.hand0_x = 	startPos.normalized().getX();
+				startnode.hand0_y = 	startPos.normalized().getY();
+				startnode.hand0_z = 	startPos.normalized().getZ();
+				startnode.hand0_x_denorm = 	startPos.getX();
+				startnode.hand0_y_denorm = 	startPos.getY();
+				startnode.hand0_z_denorm = 	startPos.getZ();
+				startnode.timestamp = System.currentTimeMillis();
+				if (newGesture.NodeList.isEmpty()) {
+					// System.out.println("list 0, adding startnode");
+					newGesture.NodeList.add(nodeCount, startnode);
+				}
+
+				System.out
+						.println("Started recording. starting pos is " + startPos);
+				System.out.println(nodeCount + "     " + startnode.toString());
+				nodeCount = nodeCount + 1;
+			}
 			currentPos = frame.hands().get(0).palmPosition();
 			// System.out.println("currentpos is " + currentPos);
-			newnode.x = currentPos.getX();
-			newnode.frame= frame;
+			newnode.hand0_x = currentPos.normalized().getX()-startnode.hand0_x;
 					//- newGesture.NodeList.get(newGesture.NodeList.size() - 1).x;
-			newnode.y = 0;
+			newnode.hand0_y =currentPos.normalized().getY()-startnode.hand0_y;
 			// newnode.y=currentPos.getY()-newGesture.NodeList.get(nodeCount-1).y;
-			newnode.z =  currentPos.normalized().getZ();
+			newnode.hand0_z =  currentPos.normalized().getZ()-startnode.hand0_z;
+			newnode.hand0_x_denorm = 	currentPos.getX()-startnode.hand0_x_denorm;
+			newnode.hand0_y_denorm = 	currentPos.getY()-startnode.hand0_y_denorm;
+			newnode.hand0_z_denorm = 	currentPos.getZ()-startnode.hand0_z_denorm;
 			// newnode.z = currentPos.getZ()
 			// - newGesture.NodeList
 			// .get(newGesture.NodeList.size() - 1).z;
@@ -178,13 +186,17 @@ class Recorderv2 {
 
 		}
 		System.out.println("stopped recording. node count is " + nodeCount);
-		System.out.println("which button should the gesture trigger?");
+		//System.out.println("which button should the gesture trigger?");
 		// newGesture.keycode = bufferRead.readLine().toString();
 
 		newGesture.NodeList.get(0).timestamp = 0;
-		//newGesture.NodeList.get(0).x = 0;
-		newGesture.NodeList.get(0).y = 0;
-		newGesture.NodeList.get(0).z = 0;
+		newGesture.NodeList.get(0).hand0_x = 0;
+		newGesture.NodeList.get(0).hand0_y = 0;
+		newGesture.NodeList.get(0).hand0_z = 0;
+		newGesture.NodeList.get(0).hand0_x_denorm = 0;
+		newGesture.NodeList.get(0).hand0_y_denorm = 0;
+		newGesture.NodeList.get(0).hand0_z_denorm = 0;
+
 		gestureList.add(gestureCount, newGesture);
 		gestureCount = gestureCount + 1;
 

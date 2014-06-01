@@ -1,15 +1,17 @@
 package leap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.leapmotion.leap.InteractionBox;
 import com.leapmotion.leap.Vector;
 
-public class UserGesture {
+public class UserGesture implements Serializable {
 
 	public Vector vector = new Vector(); 
-	public String attribute = new String();
-	public String action = new String();
+	public ArrayList<String> attributes = new ArrayList<String>();
+	public ArrayList<String> actions = new ArrayList<String>();
 	public ArrayList<Node> NodeList = new ArrayList<Node>();
 			
 

@@ -1,17 +1,20 @@
 package leap;
 
-import com.leapmotion.leap.Frame;
+import java.io.Serializable;
 
-public class Node {
+public class Node implements Serializable{
 
-	public float x;
-	public  float y;
-	public  float z;
 	public long timestamp;
-	public Frame frame;
+	public float hand0_x;
+	public float hand0_y;
+	public float hand0_z;
+	public float hand0_x_denorm;
+	public float hand0_y_denorm;
+	public float hand0_z_denorm;
+	
 	
 	 public String toString() {
-		 String s = "( "+x+", "+y+", "+z+", "+timestamp+" )";
+		 String s = "( "+hand0_x+", "+hand0_y+", "+hand0_z+", "+timestamp+" )";
          return s;
      }
 }
