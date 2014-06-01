@@ -1,5 +1,6 @@
 package leap;
 
+import java.awt.AWTException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,8 +18,8 @@ import com.leapmotion.leap.Listener;
  class Recognizer {
 	//public static Controller controller = new Controller();
 	// private static SampleListener listener = new SampleListener();
-	public static float deviationX = 0.10F;
-	public static float deviationY = 0.10F;
+	public static float deviationX = 30.10F;
+	public static float deviationY = 30.10F;
 	static Frame frame;
 	static Node currentNode;
 	public static ArrayList<Frame> startFrame = new ArrayList<Frame>();
@@ -38,7 +39,7 @@ import com.leapmotion.leap.Listener;
 	
 
 	public static void recog(ArrayList<UserGesture> gestureList,
-			Controller controller) throws IOException, InterruptedException {
+			Controller controller) throws IOException, InterruptedException, AWTException {
 		System.out.println("started recog");
 
 		long[] timer = new long[gestureList.size()];
@@ -48,63 +49,24 @@ import com.leapmotion.leap.Listener;
 		while (MapperGUI.statusRecognizing == true) {
 			//if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
 			//else {dot=0;System.out.print("\b \b \b");}
+		
+			Thread.sleep(1);
 			frame = controller.frame();
-			Thread.sleep(10);
 			for (int gestureIterator = 0; gestureIterator < gestureList.size(); gestureIterator++) {
 				if (frame.hands().isEmpty()) break;
-				if(matched[gestureIterator]==0 && System.currentTimeMillis() > (timer[gestureIterator] + 500))
+				if(matched[gestureIterator]==0)
 				{
+					System.out.println("NEW STARTFRAME");
 					if(!startFrame.isEmpty())startFrame.remove(gestureIterator);
 					startFrame.add(gestureIterator, frame);
-					
+					timer[gestureIterator]=System.currentTimeMillis();
 				}
 				// System.out.println("timer start"+timer);
-				for (int nodeIterator = matched[gestureIterator] + 1; nodeIterator < gestureList
-						.get(gestureIterator).NodeList.size();) {
-					currentNode=Recorderv2.gestureList.get(Recorderv2.gestureCount-1).NodeList.get(nodeIterator);
-					if (System.currentTimeMillis() < (timer[gestureIterator] + 2500)
-							|| timer[gestureIterator] == 0) {
-						
-						if (gestureList.get(gestureIterator).attributes.contains("XY")){
-						if ((frame.hands().get(0).palmPosition().normalized().getX()-startFrame.get(gestureIterator).hands().get(0).palmPosition().normalized().getX()) < currentNode.hand0_x
-								+ deviationX
-								&& (frame.hands().get(0).palmPosition().normalized().getX()-startFrame.get(gestureIterator).hands().get(0).palmPosition().normalized().getX()) > currentNode.hand0_x
-								- deviationX
-								&& (frame.hands().get(0).palmPosition().normalized().getY()-startFrame.get(gestureIterator).hands().get(0).palmPosition().normalized().getY()) < currentNode.hand0_y
-								+ deviationY
-								&& (frame.hands().get(0).palmPosition().normalized().getY()-startFrame.get(gestureIterator).hands().get(0).palmPosition().normalized().getY()) > currentNode.hand0_y
-								- deviationY) {
-							// System.out.println(frame.hands().get(0).palmPosition().normalized());
-							matched_attributes[gestureIterator]=matched_attributes[gestureIterator]+1;
-							}}
-						
-						
-							if (matched_attributes[gestureIterator]==Recorderv2.gestureList.get(gestureIterator).attributes.size() && matched_attributes[gestureIterator]!=0){
-								matched[gestureIterator] = nodeIterator;
-								timer[gestureIterator] = System.currentTimeMillis();
-								matched_attributes[gestureIterator]=0;
-								System.out.println("matched node number "+ nodeIterator+ " of gesture "+ gestureIterator+ " with "+ gestureList.get(gestureIterator).NodeList.get(nodeIterator).hand0_x_denorm
-								+ "with "+ (frame.hands().get(0).palmPosition().getX()-startFrame.get(gestureIterator).hands().get(0).palmPosition().getX()));
-							break;
-						} else
-							{matched_attributes[gestureIterator]=0;
-							matched[gestureIterator] = 0;
-							break; 
-							}
-						
-						}
-					else {
-						matched_attributes[gestureIterator]=0;
-						matched[gestureIterator] = 0;
-						timer[gestureIterator] = 0;
-						break;
-					}
-	
-				}
-
+			//	for (int nodeIterator = matched[gestureIterator] + 1; nodeIterator < gestureList
+					//	.get(gestureIterator).NodeList.size();) {
 				if (matched[gestureIterator] == gestureList
 						.get(gestureIterator).NodeList.size()-1){
-					// Robot.execute(gestureIterator)
+					 Robot.execute(gestureIterator);
 					if (gestureIterator==0){
 						System.out.println("A");}
 					else if(gestureIterator==1){
@@ -118,6 +80,49 @@ import com.leapmotion.leap.Listener;
 					matched_attributes[gestureIterator]=0;
 					break;
 					}
+				
+					currentNode=Recorderv2.gestureList.get(Recorderv2.gestureCount-1).NodeList.get(matched[gestureIterator]);
+					if (System.currentTimeMillis() < (timer[gestureIterator] + 100)
+							) {
+						
+						if (gestureList.get(gestureIterator).attributes.contains("XY")){
+						if ((frame.hands().get(0).palmPosition().getX()-startFrame.get(gestureIterator).hands().get(0).palmPosition().getX()) < currentNode.hand0_x_denorm
+								+ deviationX
+								&& (frame.hands().get(0).palmPosition().getX()-startFrame.get(gestureIterator).hands().get(0).palmPosition().getX()) > currentNode.hand0_x_denorm
+								- deviationX
+								&& (frame.hands().get(0).palmPosition().getY()-startFrame.get(gestureIterator).hands().get(0).palmPosition().getY()) < currentNode.hand0_y_denorm
+								+ deviationY
+								&& (frame.hands().get(0).palmPosition().getY()-startFrame.get(gestureIterator).hands().get(0).palmPosition().getY()) > currentNode.hand0_y_denorm
+								- deviationY) {
+							// System.out.println(frame.hands().get(0).palmPosition().normalized());
+							matched_attributes[gestureIterator]=matched_attributes[gestureIterator]+1;
+							}}
+						
+						
+							if (matched_attributes[gestureIterator]==Recorderv2.gestureList.get(gestureIterator).attributes.size() && matched_attributes[gestureIterator]!=0){
+								matched[gestureIterator] = matched[gestureIterator]+1;
+								timer[gestureIterator] = System.currentTimeMillis()+200;
+								matched_attributes[gestureIterator]=0;
+								System.out.println("matched node number "+ matched[gestureIterator]+ " of gesture "+ gestureIterator+ " with "+ gestureList.get(gestureIterator).NodeList.get(matched[gestureIterator]).hand0_x_denorm
+								+ "with "+ (frame.hands().get(0).palmPosition().getX()-startFrame.get(gestureIterator).hands().get(0).palmPosition().getX()));
+								break;
+						} else
+							{matched_attributes[gestureIterator]=0;
+							
+							break; 
+							}
+						
+						}
+					else {
+						matched_attributes[gestureIterator]=0;
+						matched[gestureIterator] = 0;
+						timer[gestureIterator] = 0;
+						break;
+					}
+	
+			//	}
+
+
 
 			}
 			

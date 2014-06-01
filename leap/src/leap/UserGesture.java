@@ -9,7 +9,7 @@ import com.leapmotion.leap.Vector;
 
 public class UserGesture implements Serializable {
 
-	public Vector vector = new Vector(); 
+	//public Vector vector = new Vector(); 
 	public ArrayList<String> attributes = new ArrayList<String>();
 	public ArrayList<String> actions = new ArrayList<String>();
 	public ArrayList<Node> NodeList = new ArrayList<Node>();

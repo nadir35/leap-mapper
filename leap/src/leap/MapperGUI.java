@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 import javax.sound.midi.Receiver;
 import javax.swing.*;
@@ -122,6 +125,7 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				  try
 			      {
+				
 			         FileOutputStream fileOut =
 			         new FileOutputStream("c:\\temp/gestures.ser");
 			         ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -141,11 +145,18 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				try
 			      {
+					  ArrayList<UserGesture> gl=new  ArrayList<UserGesture>();
 			         FileInputStream fileIn = new FileInputStream("c:\\temp/gestures.ser");
 			         ObjectInputStream in = new ObjectInputStream(fileIn);
-			         Recorderv2.gestureList = (ArrayList<UserGesture>) in.readObject();
+			         gl = (ArrayList<UserGesture>) in.readObject();
 			         in.close();
 			         fileIn.close();
+			         Recorderv2.gestureList = gl;
+			         Recorderv2.gestureCount= gl.size();
+			         System.out.println("Serialized data was loaded from c:\\temp/employee.ser");
+			         //System.out.println(Recorderv2.gestureList);
+			         deleteButton.setText("delete gesture nr. "
+								+ (Recorderv2.gestureCount-1));
 			      }catch(IOException i)
 			      {
 			         i.printStackTrace();
@@ -214,6 +225,9 @@ public class MapperGUI extends JFrame {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (AWTException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
@@ -330,10 +344,10 @@ class Surface extends JPanel {
 						((size.width) / 2) + nextX, ((size.height)/2) + nextY);
 				if(area==true){
 					g2d.setColor(Color.red);
-					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y+Recognizer.deviationY*300/2),
-							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2));
-					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2),
-							(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2) + y+Recognizer.deviationY*300/2));
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX),(int) (((size.height)/2) + y+Recognizer.deviationY),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX),(int) (((size.height)/2) + y-Recognizer.deviationY));
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX),(int) (((size.height)/2) + y-Recognizer.deviationY),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX),(int) (((size.height)/2) + y+Recognizer.deviationY));
 				//	a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
 				//			(int) (((size.width) / 2) + nextX+Recognizer.deviationX*300/2),(int) (((size.height)) + nextY+Recognizer.deviationZ*300/2));
 				//	a2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
@@ -370,10 +384,10 @@ class Surface extends JPanel {
 			
 			if(area==true){
 				g2d.setColor(Color.red);
-				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y+Recognizer.deviationY*300/2),
-						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2));
-				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)/2) + y-Recognizer.deviationY*300/2),
-						(int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)/2 ) + y+Recognizer.deviationY*300/2));
+				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX),(int) (((size.height)/2) + y+Recognizer.deviationY),
+						(int) (((size.width) / 2) + x-Recognizer.deviationX),(int) (((size.height)/2) + y-Recognizer.deviationY));
+				a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX),(int) (((size.height)/2) + y-Recognizer.deviationY),
+						(int) (((size.width) / 2) + x-Recognizer.deviationX),(int) (((size.height)/2 ) + y+Recognizer.deviationY));
 			//g2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
 			//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + nextY-Recognizer.deviationZ*300/2));
 				g2d.setColor(Color.blue);
@@ -405,6 +419,19 @@ class Points extends JFrame {
 
 		initUI();
 	}
+	public void recalcNodes() {
+
+		UserGesture ug = new UserGesture();
+		ug =Recorderv2.gestureList.get(Recorderv2.gestureCount - 1);
+		for(int i=1; i<ug.NodeList.size()-1;i++){
+			ug.NodeList.get(i).hand0_x_denorm=ug.NodeList.get(i+1).hand0_x_denorm-ug.NodeList.get(0).hand0_x_denorm;
+			ug.NodeList.get(i).hand0_y_denorm=ug.NodeList.get(i+1).hand0_y_denorm-ug.NodeList.get(0).hand0_y_denorm;
+			ug.NodeList.get(i).hand0_z_denorm=ug.NodeList.get(i+1).hand0_z_denorm-ug.NodeList.get(0).hand0_z_denorm;
+		}
+		ug.NodeList.get(0).hand0_x_denorm=0;
+		ug.NodeList.get(0).hand0_y_denorm=0;
+		ug.NodeList.get(0).hand0_z_denorm=0;
+	}
 
 	private void initUI() {
 
@@ -429,9 +456,12 @@ class Points extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
 						.remove(0);
+				recalcNodes();
+
 
 				surface.repaint();
 			}
+
 		});
 		deleteLast.addActionListener(new ActionListener() {
 			@Override
@@ -473,6 +503,7 @@ class ActionMapper extends JFrame {
 	JButton propAddButton = new JButton("add property ");
 	JButton actionAddButton = new JButton("add action");
 	JButton resetButton = new JButton("reset");
+	JButton recordActionButton = new JButton("record key");
 	public String[] available_props = new String[]{"A", "B"};
 	public String[] available_actions = new String[]{"C", "D"};
 	public JList<String> propList;
@@ -488,12 +519,12 @@ class ActionMapper extends JFrame {
 	public DefaultListModel<String> map_propListModel = new DefaultListModel<String>();
 	public DefaultListModel<String> map_actionListModel = new DefaultListModel<String>();
 
-	public ActionMapper() {
+	public ActionMapper()  {
 		getContentPane().add(panel);
 		initUI();
 	}
 
-	private void initUI() {
+	private void initUI()  {
 
 		setTitle("ActionMapper");
 		// final Surface surface = new Surface();
@@ -503,10 +534,7 @@ class ActionMapper extends JFrame {
 	    propListModel.addElement("b");
 	    propListModel.addElement("c");
 	    propListModel.addElement("d");
-		actionListModel.addElement("e");
-	    actionListModel.addElement("f");
-	    actionListModel.addElement("g");
-	    actionListModel.addElement("e");
+
 	        
 	    
 	
@@ -535,7 +563,7 @@ class ActionMapper extends JFrame {
 		
 		
 		
-		
+		recordActionButton.setBounds(550, 450, 100, 30);
 		mapButton.setBounds(300, 600, 100, 30);
 		propAddButton.setBounds(100, 500, 100, 30);
 		actionAddButton.setBounds(550, 500, 100, 30);
@@ -579,15 +607,62 @@ class ActionMapper extends JFrame {
 				Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.clear();
 			}}
 		});
+		recordActionButton.addActionListener(new ActionListener() {
+			private String key;
+
+			@SuppressWarnings({ "null", "static-access" })
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				// TODO Auto-generated method stub
+				 JOptionPane jo = new  JOptionPane();
+						 jo.showMessageDialog(null, " press a key after closign this dialog");
+					
+						 KeyListener listener = new KeyListener() {
+							 private int k;
+
+							@Override
+							 public void keyTyped(KeyEvent e) {
+							
+							 }
+
+							@Override
+							public void keyPressed(KeyEvent e) {
+								// TODO Auto-generated method stub
+							
+								
+							}
+
+							@Override
+							public void keyReleased(KeyEvent e) {
+								// TODO Auto-generated method stub
+								k=e.getKeyCode();
+								key= e.getKeyText(k);
+								 actionListModel.addElement(Integer.toString(k)+"   = "+key);
+								 recordActionButton.removeKeyListener(this);
+								
+							}
+						 
+						 };
+						 
+						 recordActionButton.addKeyListener(listener);
+
+					 
+					
+					}
+			
+		});
+
 		// add(surface);
 		panel.add(mapButton);
 		panel.add(propAddButton);
 		panel.add(actionAddButton);
 		panel.add(resetButton);
+		panel.add(recordActionButton);
 		propListScroller.setBounds(50, 100, 100,300);
 		map_propListScroller.setBounds(270, 100, 100,300);
 		actionListScroller.setBounds(600, 100, 100,300);
 		map_actionListScroller.setBounds(380, 100, 100,300);
+		
 		//panel.add(list);
 		panel.add(propListScroller);
 		panel.add(map_propListScroller);
@@ -640,5 +715,8 @@ class FPSGraph extends JPanel {
 		super.paintComponent(g);
 		doDrawing(g, Points.finger, Points.area);
 	}
+
+
+
 
 }
