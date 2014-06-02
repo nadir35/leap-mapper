@@ -51,14 +51,13 @@ import com.leapmotion.leap.Listener;
 
 		long[] timer = new long[gestureList.size()];
 		int[] matched = new int[gestureList.size()];
-		int dot=0;
+
 		int[] matched_attributes = new int[100];
 		String[] gestureStatus = new String[100];
 
 
 		while (MapperGUI.statusRecognizing == true) {
-			if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
-			else {dot=0;System.out.print("\b \b \b");}
+
 		
 			Thread.sleep(5);
 			frame = controller.frame();

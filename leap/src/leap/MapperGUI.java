@@ -261,7 +261,7 @@ public class MapperGUI extends JFrame {
 		panel.add(deleteButton);
 		panel.add(stopRecogButton);
 		panel.add(statusLabel);
-		panel.add(showFPS);
+
 		panel.add(saveGestures);
 		panel.add(loadGestures);
 		statusLabel.setVisible(false);
@@ -271,7 +271,7 @@ public class MapperGUI extends JFrame {
 		startMapper.setBounds(100, 300, 120, 30);
 		startRecog.setBounds(100, 400, 140, 30);
 		stopRecogButton.setBounds(300, 400, 140, 30);
-		showFPS.setBounds(300, 200, 140, 30);
+
 		deleteButton.setBounds(400, 100, 180, 30);
 		saveGestures.setBounds(500, 300, 100, 30);
 		loadGestures.setBounds(600, 300, 100, 30);
@@ -951,51 +951,4 @@ private void refreshData(){
 		
 	 
 }
-}
-class FPS extends JFrame {
-
-
-	public FPS() {
-
-		initUI();
-	}
-
-	private void initUI() {
-
-		setTitle("FPS");
-		final FPSGraph surface = new FPSGraph();
-		
-		add(surface);
-		setSize(750, 750);
-		setLocationRelativeTo(null);
-	}
-}
-class FPSGraph extends JPanel {
-
-	private void doDrawing(Graphics g, boolean finger, boolean area) {
-
-		Graphics2D g2d = (Graphics2D) g;
-
-		g2d.setColor(Color.blue);
-
-		Dimension size = getSize();
-		Insets insets = getInsets();
-
-		int w = size.width - insets.left - insets.right;
-		int h = size.height - insets.top - insets.bottom;
-
-
-
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-
-		super.paintComponent(g);
-		//doDrawing(g, Points.property, Points.area);
-	}
-
-
-
-
 }
