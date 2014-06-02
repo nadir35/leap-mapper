@@ -10,6 +10,7 @@ import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Frame;
 import com.leapmotion.leap.Gesture;
 import com.leapmotion.leap.GestureList;
+import com.leapmotion.leap.Hand;
 import com.leapmotion.leap.Listener;
 import com.leapmotion.leap.Vector;
 
@@ -68,6 +69,8 @@ class Recorderv2 {
 			System.in));
 	public static ArrayList<UserGesture> gestureList = new ArrayList<UserGesture>();
 	static UserGesture newGesture = new UserGesture();
+	private static Hand startHand;
+	private static Hand currentHand;
 
 	public static void main(String[] args) throws IOException,
 			InterruptedException {
@@ -131,7 +134,7 @@ class Recorderv2 {
 			while (frame.hands().isEmpty() && MapperGUI.statusRecording == true) {
 				//System.out.println("no hands detected");
 				frame = controller.frame();
-				Thread.sleep(10);
+				Thread.sleep(100);
 			}
 			if (MapperGUI.statusRecording == false)
 				break;
@@ -143,6 +146,7 @@ class Recorderv2 {
 						+ gestureCount);
 				// System.out.println("hand palmvelocity "
 				// + frame.hands().get(0).palmVelocity());
+				startHand = frame.hands().get(0);
 				startPos = frame.hands().get(0).palmPosition();
 				startTime = frame.timestamp();
 
@@ -153,6 +157,16 @@ class Recorderv2 {
 				startnode.hand0_x_denorm = 	startPos.getX();
 				startnode.hand0_y_denorm = 	startPos.getY();
 				startnode.hand0_z_denorm = 	startPos.getZ();
+				startnode.hand0_frontmost_x = startHand.fingers().frontmost().tipPosition().getX();
+				startnode.hand0_frontmost_y = startHand.fingers().frontmost().tipPosition().getY();
+				startnode.hand0_frontmost_z = startHand.fingers().frontmost().tipPosition().getZ();
+				startnode.hand0_pitch = startHand.direction().pitch();
+				startnode.hand0_yaw =  startHand.direction().yaw();
+				startnode.hand0_roll =  startHand.palmNormal().roll();
+				
+				
+				
+				
 				startnode.timestamp = System.currentTimeMillis();
 				if (newGesture.NodeList.isEmpty()) {
 					// System.out.println("list 0, adding startnode");
@@ -164,6 +178,7 @@ class Recorderv2 {
 				System.out.println(nodeCount + "     " + startnode.toString());
 				nodeCount = nodeCount + 1;
 			}
+			currentHand =frame.hands().get(0);
 			currentPos = frame.hands().get(0).palmPosition();
 			// System.out.println("currentpos is " + currentPos);
 			newnode.hand0_x = currentPos.normalized().getX()-startnode.hand0_x;
@@ -174,6 +189,12 @@ class Recorderv2 {
 			newnode.hand0_x_denorm = 	currentPos.getX()-startnode.hand0_x_denorm;
 			newnode.hand0_y_denorm = 	currentPos.getY()-startnode.hand0_y_denorm;
 			newnode.hand0_z_denorm = 	currentPos.getZ()-startnode.hand0_z_denorm;
+			newnode.hand0_frontmost_x = currentHand.fingers().frontmost().tipPosition().getX()-newGesture.NodeList.get(0).hand0_frontmost_x;
+			newnode.hand0_frontmost_y = currentHand.fingers().frontmost().tipPosition().getY()-newGesture.NodeList.get(0).hand0_frontmost_y;
+			newnode.hand0_frontmost_z = currentHand.fingers().frontmost().tipPosition().getZ()-newGesture.NodeList.get(0).hand0_frontmost_z;
+			newnode.hand0_pitch = currentHand.direction().pitch()-startHand.direction().pitch();
+			newnode.hand0_yaw = currentHand.direction().yaw()-startHand.direction().yaw();
+			newnode.hand0_roll = currentHand.palmNormal().roll()-startHand.palmNormal().roll();
 			// newnode.z = currentPos.getZ()
 			// - newGesture.NodeList
 			// .get(newGesture.NodeList.size() - 1).z;
@@ -188,7 +209,7 @@ class Recorderv2 {
 		System.out.println("stopped recording. node count is " + nodeCount);
 		//System.out.println("which button should the gesture trigger?");
 		// newGesture.keycode = bufferRead.readLine().toString();
-
+if (newGesture.NodeList.isEmpty()==false){
 		newGesture.NodeList.get(0).timestamp = 0;
 		newGesture.NodeList.get(0).hand0_x = 0;
 		newGesture.NodeList.get(0).hand0_y = 0;
@@ -196,7 +217,15 @@ class Recorderv2 {
 		newGesture.NodeList.get(0).hand0_x_denorm = 0;
 		newGesture.NodeList.get(0).hand0_y_denorm = 0;
 		newGesture.NodeList.get(0).hand0_z_denorm = 0;
-
+		newGesture.NodeList.get(0).hand0_frontmost_x = 0;
+		newGesture.NodeList.get(0).hand0_frontmost_y = 0;
+		newGesture.NodeList.get(0).hand0_frontmost_z = 0;
+		newGesture.NodeList.get(0).hand0_pitch = 0;
+		newGesture.NodeList.get(0).hand0_yaw = 0;
+		newGesture.NodeList.get(0).hand0_roll = 0;}
+else{System.out.println(" no node was written, returning");
+		return;
+}
 		gestureList.add(gestureCount, newGesture);
 		gestureCount = gestureCount + 1;
 

@@ -134,7 +134,7 @@ public class MapperGUI extends JFrame {
 			         out.writeObject(Recorderv2.gestureList);
 			         out.close();
 			         fileOut.close();
-			         System.out.printf("Serialized data is saved in c:\\temp/employee.ser");
+			         System.out.println("Serialized data is saved in c:\\temp/employee.ser");
 			      }catch(IOException i)
 			      {
 			          i.printStackTrace();
@@ -173,11 +173,10 @@ public class MapperGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Points.area=false;
-				Points.finger=false;
+				Points.property=0;
 				if(!Recorderv2.gestureList.isEmpty())
 					{Points ps = new Points();
 				Points.area=false;
-				Points.finger=false;
 				ps.setVisible(true);}
 				
 			}
@@ -187,10 +186,10 @@ public class MapperGUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 
 	
-				if(!Recorderv2.gestureList.isEmpty())
+			/*	if(!Recorderv2.gestureList.isEmpty())
 					{FPS fps = new FPS();
 	
-				fps.setVisible(true);}
+				fps.setVisible(true);}*/
 				
 			}
 		});
@@ -201,10 +200,10 @@ public class MapperGUI extends JFrame {
 				ActionMapper am = new ActionMapper();
 				am.setVisible(true);
 				if(Recorderv2.gestureCount!=0){
-					am.map_propListModel.clear();
-					Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.clear();
-					am.map_actionListModel.clear();
-					Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.clear();
+					//am.map_propListModel.clear();
+					//Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.clear();
+					//am.map_actionListModel.clear();
+				//	Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.clear();
 				}
 			}
 		});
@@ -307,7 +306,7 @@ public class MapperGUI extends JFrame {
 
 class Surface extends JPanel {
 
-	private void doDrawing(Graphics g, boolean finger, boolean area) {
+	private void doDrawing(Graphics g, int property, boolean area, int showingGesture) {
 
 		Graphics2D g2d = (Graphics2D) g;
 		Graphics2D a2d = (Graphics2D) g;
@@ -321,23 +320,23 @@ class Surface extends JPanel {
 		int w = size.width - insets.left - insets.right;
 		int h = size.height - insets.top - insets.bottom;
 
-		if (finger == false) {
+		if (property == 0) { // draw palm XY
 			for (int i = 1; i < Recorderv2.gestureList
-					.get(Recorderv2.gestureCount - 1).NodeList.size() - 1; i++) {
+					.get(showingGesture).NodeList.size() - 1; i++) {
 
 				int x = (int) (Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_x_denorm % w);
+						.get(showingGesture).NodeList.get(i).hand0_x_denorm % w);
 				int y = (int) -(Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_y_denorm % h);
+						.get(showingGesture).NodeList.get(i).hand0_y_denorm % h);
 				int nextX = 0;
 				int nextY = 0;
-				if (Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
+				if (Recorderv2.gestureList.get(showingGesture).NodeList
 						.size() != (i + 1)) {
 					nextX = (int) (Recorderv2.gestureList
-							.get(Recorderv2.gestureCount - 1).NodeList
+							.get(showingGesture).NodeList
 							.get(i + 1).hand0_x_denorm % w);
 					nextY = (int) -(Recorderv2.gestureList
-							.get(Recorderv2.gestureCount - 1).NodeList
+							.get(showingGesture).NodeList
 							.get(i + 1).hand0_y_denorm % h);
 					
 				}
@@ -363,24 +362,30 @@ class Surface extends JPanel {
 					g2d.setColor(Color.blue);
 					}
 			}
-		} else if (finger == true) {
+			g2d.drawString("y",1,(size.height)-18);
+			g2d.drawString("^",18,(size.height)-27);
+			g2d.drawString("|",19,(size.height)-25);
+			
+			g2d.drawString("->",19,(size.height)-15);
+			g2d.drawString("x",15,(size.height)-6);
+		} else if (property ==1) { //draw finger XY
 			for (int i = 1; i < Recorderv2.gestureList
-					.get(Recorderv2.gestureCount - 1).NodeList.size() - 1; i++) {
+					.get(showingGesture).NodeList.size() - 1; i++) {
 
 				int x = (int) (Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_x_denorm % w);
+						.get(showingGesture).NodeList.get(i).hand0_frontmost_x % w);
 				int y = (int) -(Recorderv2.gestureList
-						.get(Recorderv2.gestureCount - 1).NodeList.get(i).hand0_y_denorm % h);
+						.get(showingGesture).NodeList.get(i).hand0_frontmost_y % h);
 				int nextX = 0;
 				int nextY = 0;
-				if (Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
+				if (Recorderv2.gestureList.get(showingGesture).NodeList
 						.size() != (i + 1)) {
 					nextX = (int) (Recorderv2.gestureList
-							.get(Recorderv2.gestureCount - 1).NodeList
-							.get(i + 1).hand0_x_denorm % w);
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_frontmost_x % w);
 					nextY = -(int) (Recorderv2.gestureList
-							.get(Recorderv2.gestureCount - 1).NodeList
-							.get(i + 1).hand0_y_denorm % h);
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_frontmost_y % h);
 				}
 				if (i % 10 == 1)
 					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
@@ -399,6 +404,151 @@ class Surface extends JPanel {
 				g2d.setColor(Color.blue);
 				}
 			}
+			g2d.drawString("y",1,(size.height)-18);
+			g2d.drawString("^",18,(size.height)-27);
+			g2d.drawString("|",19,(size.height)-25);
+			
+			g2d.drawString("->",19,(size.height)-15);
+			g2d.drawString("x",15,(size.height)-6);
+		}
+		else if (property ==2) { //show pitch
+			for (int i = 1; i < Recorderv2.gestureList
+					.get(showingGesture).NodeList.size() - 1; i++) {
+
+				int x = i/2;
+				int y = (int) (Recorderv2.gestureList
+						.get(showingGesture).NodeList.get(i).hand0_pitch*200);
+				int nextX = 0;
+				int nextY = 0;
+				if (Recorderv2.gestureList.get(showingGesture).NodeList
+						.size() != (i + 1)) {
+					nextX = (i+1)/2;
+					nextY = (int) (Recorderv2.gestureList
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_pitch*200);
+				}
+				if (i % 10 == 1)
+					g2d.drawString(Integer.toString(i), 100 + x,
+							((size.height)/2) + y);
+				g2d.drawLine(100 + x, ((size.height)/2) + y,
+						100 + nextX, ((size.height)/2) + nextY);
+
+			}
+			g2d.drawString("value",1,(size.height)-18);
+			g2d.drawString("^",38,(size.height)-27);
+			g2d.drawString("|",39,(size.height)-25);
+			
+			g2d.drawString("->",39,(size.height)-15);
+			g2d.drawString("time",35,(size.height)-6);
+		}
+		else if (property ==3) { //show yaw
+			for (int i = 1; i < Recorderv2.gestureList
+					.get(showingGesture).NodeList.size() - 1; i++) {
+
+				int x = (int) (Recorderv2.gestureList
+						.get(showingGesture).NodeList.get(i).hand0_yaw*200);
+				int y = i/2;
+				int nextX = 0;
+				int nextY = 0;
+				if (Recorderv2.gestureList.get(showingGesture).NodeList
+						.size() != (i + 1)) {
+					nextY = (i+1)/2;
+					nextX = (int) (Recorderv2.gestureList
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_yaw*200);
+				}
+				if (i % 10 == 1)
+					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
+							((size.height)-100) - y);
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)-100) - y,
+						((size.width) / 2) + nextX, ((size.height)-100) - nextY);
+
+			}
+			g2d.drawString("time",1,(size.height)-18);
+			g2d.drawString("^",38,(size.height)-27);
+			g2d.drawString("|",39,(size.height)-25);
+			
+			g2d.drawString("->",39,(size.height)-15);
+			g2d.drawString("value",35,(size.height)-6);
+		}
+		else if (property ==4) { //show roll
+			for (int i = 1; i < Recorderv2.gestureList
+					.get(showingGesture).NodeList.size() - 1; i++) {
+
+				int x = (int) -(Recorderv2.gestureList
+						.get(showingGesture).NodeList.get(i).hand0_roll*200);
+				int y = i/2;
+				int nextX = 0;
+				int nextY = 0;
+				if (Recorderv2.gestureList.get(showingGesture).NodeList
+						.size() != (i + 1)) {
+					nextY = (i+1)/2;
+					nextX = (int) -(Recorderv2.gestureList
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_roll*200);
+				}
+				if (i % 10 == 1)
+					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
+							((size.height)-100) - y);
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)-100) - y,
+						((size.width) / 2) + nextX, ((size.height)-100) - nextY);
+
+			}
+			g2d.drawString("time",1,(size.height)-18);
+			g2d.drawString("^",38,(size.height)-27);
+			g2d.drawString("|",39,(size.height)-25);
+			
+			g2d.drawString("->",39,(size.height)-15);
+			g2d.drawString("value",35,(size.height)-6);
+		}
+		else if (property == 5) { // draw palm XZ
+			for (int i = 1; i < Recorderv2.gestureList
+					.get(showingGesture).NodeList.size() - 1; i++) {
+
+				int x = (int) (Recorderv2.gestureList
+						.get(showingGesture).NodeList.get(i).hand0_x_denorm % w);
+				int y = (int) -(Recorderv2.gestureList
+						.get(showingGesture).NodeList.get(i).hand0_z_denorm % h);
+				int nextX = 0;
+				int nextY = 0;
+				if (Recorderv2.gestureList.get(showingGesture).NodeList
+						.size() != (i + 1)) {
+					nextX = (int) (Recorderv2.gestureList
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_x_denorm % w);
+					nextY = (int) -(Recorderv2.gestureList
+							.get(showingGesture).NodeList
+							.get(i + 1).hand0_z_denorm % h);
+					
+				}
+				if (i % 10 == 1){
+					
+					g2d.drawString(Integer.toString(i), ((size.width) / 2) + x,
+							((size.height)/2) + y);
+					}
+				g2d.drawLine(((size.width) / 2) + x, ((size.height)/2) + y,
+						((size.width) / 2) + nextX, ((size.height)/2) + nextY);
+				if(area==true){
+					g2d.setColor(Color.red);
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX),(int) (((size.height)/2) + y+Recognizer.deviationZ),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX),(int) (((size.height)/2) + y-Recognizer.deviationZ));
+					a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX),(int) (((size.height)/2) + y-Recognizer.deviationZ),
+							(int) (((size.width) / 2) + x-Recognizer.deviationX),(int) (((size.height)/2) + y+Recognizer.deviationZ));
+				//	a2d.drawLine((int) (((size.width) / 2) + x+Recognizer.deviationX*300/2),(int) (((size.height)) + y+Recognizer.deviationZ*300/2),
+				//			(int) (((size.width) / 2) + nextX+Recognizer.deviationX*300/2),(int) (((size.height)) + nextY+Recognizer.deviationZ*300/2));
+				//	a2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height)) + y-Recognizer.deviationZ*300/2),
+					//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height)) + nextY-Recognizer.deviationZ*300/2));
+				//g2d.drawLine((int) (((size.width) / 2) + x-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + y-Recognizer.deviationZ*300/2),
+				//		(int) (((size.width) / 2) + nextX-Recognizer.deviationX*300/2),(int) (((size.height) / 2) + nextY-Recognizer.deviationZ*300/2));
+					g2d.setColor(Color.blue);
+					}
+			}
+			g2d.drawString("z",1,(size.height)-18);
+			g2d.drawString("^",18,(size.height)-27);
+			g2d.drawString("|",19,(size.height)-25);
+			
+			g2d.drawString("->",19,(size.height)-15);
+			g2d.drawString("x",15,(size.height)-6);
 		}
 
 	}
@@ -407,19 +557,23 @@ class Surface extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		super.paintComponent(g);
-		doDrawing(g, Points.finger, Points.area);
+		doDrawing(g, Points.property, Points.area, Points.showingGesture);
 		
 	}
 
 }
 
 class Points extends JFrame {
-	public static boolean finger = false;
+	public static int property = 0;
 	public static boolean area = false;
-	JButton showFinger = new JButton("show finger coordinates");
+	public static int showingGesture = Recorderv2.gestureList.size()-1;
+	JButton showProperty = new JButton("show finger xy coordinates");
 	JButton deleteFirst = new JButton("delete First node");
 	JButton deleteLast = new JButton("delete Last node");
 	JButton showArea = new JButton("show recognition area (beta");
+	JButton nextGesture = new JButton("next Gesture");
+	JButton prevGesture = new JButton("prev Gesture");
+	JLabel curGesture = new JLabel("current: "+Integer.toString(showingGesture));
 
 	public Points() {
 
@@ -428,39 +582,81 @@ class Points extends JFrame {
 	public void recalcNodes() {
 
 		UserGesture ug = new UserGesture();
-		ug =Recorderv2.gestureList.get(Recorderv2.gestureCount - 1);
+		ug =Recorderv2.gestureList.get(showingGesture);
 		for(int i=1; i<ug.NodeList.size()-1;i++){
 			ug.NodeList.get(i).hand0_x_denorm=ug.NodeList.get(i+1).hand0_x_denorm-ug.NodeList.get(0).hand0_x_denorm;
 			ug.NodeList.get(i).hand0_y_denorm=ug.NodeList.get(i+1).hand0_y_denorm-ug.NodeList.get(0).hand0_y_denorm;
 			ug.NodeList.get(i).hand0_z_denorm=ug.NodeList.get(i+1).hand0_z_denorm-ug.NodeList.get(0).hand0_z_denorm;
+
+			ug.NodeList.get(i).hand0_frontmost_x=ug.NodeList.get(i+1).hand0_frontmost_x-ug.NodeList.get(0).hand0_frontmost_x;
+			ug.NodeList.get(i).hand0_frontmost_y=ug.NodeList.get(i+1).hand0_frontmost_y-ug.NodeList.get(0).hand0_frontmost_y;
+			ug.NodeList.get(i).hand0_frontmost_z=ug.NodeList.get(i+1).hand0_frontmost_z-ug.NodeList.get(0).hand0_frontmost_z;
+			ug.NodeList.get(i).hand0_pitch=ug.NodeList.get(i+1).hand0_pitch-ug.NodeList.get(0).hand0_pitch;
+			ug.NodeList.get(i).hand0_roll=ug.NodeList.get(i+1).hand0_roll-ug.NodeList.get(0).hand0_roll;
+			ug.NodeList.get(i).hand0_yaw=ug.NodeList.get(i+1).hand0_yaw-ug.NodeList.get(0).hand0_yaw;
+			
 		}
 		ug.NodeList.get(0).hand0_x_denorm=0;
 		ug.NodeList.get(0).hand0_y_denorm=0;
 		ug.NodeList.get(0).hand0_z_denorm=0;
+		
+		ug.NodeList.get(0).hand0_frontmost_x=0;
+		ug.NodeList.get(0).hand0_frontmost_y=0;
+		ug.NodeList.get(0).hand0_frontmost_z=0;
+		ug.NodeList.get(0).hand0_pitch=0;
+		ug.NodeList.get(0).hand0_roll=0;
+		ug.NodeList.get(0).hand0_yaw=0;
+		
 	}
 
 	private void initUI() {
 
-		setTitle("Points");
+		setTitle("Palm XY");
 		final Surface surface = new Surface();
-		showFinger.setBounds(50, 60, 80, 30);
-		showFinger.addActionListener(new ActionListener() {
+		showProperty.setBounds(50, 60, 180, 30);
+		showProperty.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if (finger == false) {
-					finger = true;
-					showFinger.setText("show palm coordinates");
-				} else if (finger == true) {
-					finger = false;
-					showFinger.setText("show finger coordinates");
+				if (property ==0) {
+					property=property+1;
+					showProperty.setText("show pitch");
+					setTitle("finger xy");
+				} else if (property==1) {
+					property=property+1;
+					setTitle("pitch");
+					showProperty.setText("show yaw");
 				}
+				 else if (property==2) {
+						property=property+1;
+						setTitle("yaw");
+						showProperty.setText("show roll");
+					}
+				 else if (property==3) {
+						property=property+1;
+						setTitle("roll");
+						showProperty.setText("show palm XZ");
+					}
+				 else if (property==4) {
+						property=property+1;
+						setTitle("Palm XZ");
+						showProperty.setText("show palm XY");
+					}
+				 else if (property==5) {
+						property=0;
+						setTitle("Palm XY");
+						showProperty.setText("show finger  XY coordinates");
+					}
+				
+				
+				
+				
 				surface.repaint();
 			}
 		});
 		deleteFirst.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
+				Recorderv2.gestureList.get(showingGesture).NodeList
 						.remove(0);
 				recalcNodes();
 
@@ -472,9 +668,9 @@ class Points extends JFrame {
 		deleteLast.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Recorderv2.gestureList.get(Recorderv2.gestureCount - 1).NodeList
+				Recorderv2.gestureList.get(showingGesture).NodeList
 						.remove(Recorderv2.gestureList
-								.get(Recorderv2.gestureCount - 1).NodeList
+								.get(showingGesture).NodeList
 								.size() - 1);
 				surface.repaint();
 			}
@@ -493,11 +689,33 @@ class Points extends JFrame {
 				surface.repaint();
 			}
 		});
+		nextGesture.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if(showingGesture<Recorderv2.gestureList.size()-1)
+					showingGesture=showingGesture+1;
+				curGesture.setText("current: "+Integer.toString(showingGesture));
+				surface.repaint();
+			}
+		});
+		prevGesture.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if(showingGesture>0)
+					showingGesture=showingGesture-1;
+				curGesture.setText("current: "+Integer.toString(showingGesture));
+				surface.repaint();
+			}
+		});
+		
 		add(surface);
-		surface.add(showFinger);
+		surface.add(showProperty);
 		surface.add(deleteFirst);
 		surface.add(deleteLast);
 		surface.add(showArea);
+		surface.add(prevGesture);
+		surface.add(nextGesture);
+		surface.add(curGesture);
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}
@@ -510,6 +728,7 @@ class ActionMapper extends JFrame {
 	JButton actionAddButton = new JButton("add action");
 	JButton resetButton = new JButton("reset");
 	JButton recordActionButton = new JButton("record key");
+	JCheckBox contBox = new JCheckBox("continuous");
 	public String[] available_props = new String[]{"A", "B"};
 	public String[] available_actions = new String[]{"C", "D"};
 	public JList<String> propList;
@@ -524,10 +743,15 @@ class ActionMapper extends JFrame {
 	public DefaultListModel<String> actionListModel = new DefaultListModel<String>();
 	public DefaultListModel<String> map_propListModel = new DefaultListModel<String>();
 	public DefaultListModel<String> map_actionListModel = new DefaultListModel<String>();
+	public static int settingGesture=0;
+	JButton nextGesture = new JButton("next Gesture");
+	JButton prevGesture = new JButton("prev Gesture");
+	JLabel curGesture = new JLabel();
 
 	public ActionMapper()  {
 		getContentPane().add(panel);
 		initUI();
+		refreshData();
 	}
 
 	private void initUI()  {
@@ -536,13 +760,9 @@ class ActionMapper extends JFrame {
 		// final Surface surface = new Surface();
 	
 		panel.setLayout(null);
-		propListModel.addElement("XY");
-	    propListModel.addElement("b");
-	    propListModel.addElement("c");
-	    propListModel.addElement("d");
 
-	        
-	    
+
+	   
 	
 	    propList = new JList<String>(propListModel);    
 		propList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -565,10 +785,11 @@ class ActionMapper extends JFrame {
 		map_actionList.setVisibleRowCount(3);
 		map_actionListScroller = new JScrollPane(map_actionList);
 	    
-		
-		
-		
-		
+
+		curGesture.setBounds(350, 50, 50, 30);
+		prevGesture.setBounds(150, 50, 100, 30);
+		nextGesture.setBounds(500, 50, 100, 30);
+		contBox.setBounds(350, 500, 100, 30);
 		recordActionButton.setBounds(550, 450, 100, 30);
 		mapButton.setBounds(300, 600, 100, 30);
 		propAddButton.setBounds(100, 500, 100, 30);
@@ -580,14 +801,15 @@ class ActionMapper extends JFrame {
 				// assign action and properties to gesture
 				if(Recorderv2.gestureCount!=0){
 				for(int i=0;i<map_propListModel.size();i++){
-					if((Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.size()==0) || (Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.size()!=map_propListModel.size() ))	
-						Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.add(i, map_propListModel.get(i).toString());}
+					if((Recorderv2.gestureList.get(settingGesture).attributes.size()==0) || (Recorderv2.gestureList.get(settingGesture).attributes.size()!=map_propListModel.size() ))	
+						Recorderv2.gestureList.get(settingGesture).attributes.add(i, map_propListModel.get(i).toString());}
 				for(int i=0;i<map_actionListModel.size();i++){
-					if((Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.size()==0) || (Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.size()!=map_actionListModel.size() ))	
-						Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.add(i, map_actionListModel.get(i).toString());}
-				System.out.print(Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.toString());
-				System.out.println("    "+Recorderv2.gestureList.get(+Recorderv2.gestureCount-1).actions.toString());
-				Recorderv2.gestureList.get(+Recorderv2.gestureCount-1).cont=true;
+					if((Recorderv2.gestureList.get(settingGesture).actions.size()==0) || (Recorderv2.gestureList.get(settingGesture).actions.size()!=map_actionListModel.size() ))	
+						Recorderv2.gestureList.get(settingGesture).actions.add(i, map_actionListModel.get(i).toString());}
+				System.out.print("gesture nr. "+settingGesture+"  "+Recorderv2.gestureList.get(settingGesture).attributes.toString());
+				System.out.println("    "+Recorderv2.gestureList.get(settingGesture).actions.toString()+"    continuous:"+contBox.isSelected());
+				if (contBox.isSelected()==true)Recorderv2.gestureList.get(settingGesture).cont=true;
+				if (contBox.isSelected()==false)Recorderv2.gestureList.get(settingGesture).cont=false;
 				}}
 		});
 		propAddButton.addActionListener(new ActionListener() {
@@ -609,9 +831,9 @@ class ActionMapper extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				if(Recorderv2.gestureCount!=0){
 				map_propListModel.clear();
-				Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.clear();
+				Recorderv2.gestureList.get(settingGesture).actions.clear();
 				map_actionListModel.clear();
-				Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.clear();
+				Recorderv2.gestureList.get(settingGesture).attributes.clear();
 			}}
 		});
 		recordActionButton.addActionListener(new ActionListener() {
@@ -658,13 +880,39 @@ class ActionMapper extends JFrame {
 					}
 			
 		});
+		nextGesture.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if(settingGesture<Recorderv2.gestureList.size()-1)
+					{settingGesture=settingGesture+1;
+					refreshData();
+				}
+				
+			}
+		});
+		prevGesture.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if(settingGesture>0){
+					settingGesture=settingGesture-1;
+					getContentPane().remove(panel);
+					getContentPane().add(panel);
+					refreshData();
+				}
+				
+			}
+		});
 
-		// add(surface);
+
 		panel.add(mapButton);
 		panel.add(propAddButton);
 		panel.add(actionAddButton);
 		panel.add(resetButton);
 		panel.add(recordActionButton);
+		panel.add(contBox);
+		panel.add(prevGesture);
+		panel.add(nextGesture);
+		panel.add(curGesture);
 		propListScroller.setBounds(50, 100, 100,300);
 		map_propListScroller.setBounds(270, 100, 100,300);
 		actionListScroller.setBounds(600, 100, 100,300);
@@ -679,6 +927,29 @@ class ActionMapper extends JFrame {
 		setSize(750, 750);
 		setLocationRelativeTo(null);
 	}
+
+private void refreshData(){
+	propListModel.clear();
+	map_propListModel.clear();
+	map_actionListModel.clear();
+	propListModel.addElement("XY");
+    propListModel.addElement("XZ");
+    propListModel.addElement("frontmost_finger_XY");
+    propListModel.addElement("frontmost_finger_XZ");
+	propListModel.addElement("roll");
+    propListModel.addElement("yaw");
+	propListModel.addElement("pitch");
+	 curGesture.setText(Integer.toString(settingGesture));
+		for(int i=0;i<Recorderv2.gestureList.get(settingGesture).attributes.size();i++)
+			map_propListModel.addElement(Recorderv2.gestureList.get(settingGesture).attributes.get(i));
+		for(int i=0;i<Recorderv2.gestureList.get(settingGesture).actions.size();i++)
+			map_actionListModel.addElement(Recorderv2.gestureList.get(settingGesture).actions.get(i));
+		if (Recorderv2.gestureList.get(settingGesture).cont==true)
+			contBox.setSelected(true);
+		
+		
+	 
+}
 }
 class FPS extends JFrame {
 
@@ -720,7 +991,7 @@ class FPSGraph extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		super.paintComponent(g);
-		doDrawing(g, Points.finger, Points.area);
+		//doDrawing(g, Points.property, Points.area);
 	}
 
 
