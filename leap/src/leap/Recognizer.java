@@ -57,10 +57,10 @@ import com.leapmotion.leap.Listener;
 
 
 		while (MapperGUI.statusRecognizing == true) {
-			//if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
-			//else {dot=0;System.out.print("\b \b \b");}
+			if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
+			else {dot=0;System.out.print("\b \b \b");}
 		
-			Thread.sleep(1);
+			Thread.sleep(5);
 			frame = controller.frame();
 			currentHand = frame.hands().get(0);
 			for (int gestureIterator = 0; gestureIterator < gestureList.size(); gestureIterator++) {

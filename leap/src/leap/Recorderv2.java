@@ -115,6 +115,7 @@ class Recorderv2 {
 		gestureCount = i;
 		newGesture = new UserGesture();
 		nodeCount = 0;
+		int dot=0;
 		boolean sta = MapperGUI.statusRecording;
 		Node startnode = new Node();
 		/*
@@ -126,6 +127,8 @@ class Recorderv2 {
 		 */
 
 		while (MapperGUI.statusRecording == true) {
+			if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
+			else {dot=0;System.out.print("\b \b \b");}
 			
 			// System.out.println("	click to node the current position to node["+(newGesture.NodeList.size())+"]");
 			frame = controller.frame();
@@ -134,7 +137,7 @@ class Recorderv2 {
 			while (frame.hands().isEmpty() && MapperGUI.statusRecording == true) {
 				//System.out.println("no hands detected");
 				frame = controller.frame();
-				Thread.sleep(100);
+				Thread.sleep(10);
 			}
 			if (MapperGUI.statusRecording == false)
 				break;

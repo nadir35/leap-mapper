@@ -129,12 +129,12 @@ public class MapperGUI extends JFrame {
 			      {
 				
 			         FileOutputStream fileOut =
-			         new FileOutputStream("c:\\temp/gestures.ser");
+			         new FileOutputStream("c:\\gestures.ser");
 			         ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			         out.writeObject(Recorderv2.gestureList);
 			         out.close();
 			         fileOut.close();
-			         System.out.println("Serialized data is saved in c:\\temp/employee.ser");
+			         System.out.println("Serialized data is saved in c:\\gestures.ser");
 			      }catch(IOException i)
 			      {
 			          i.printStackTrace();
@@ -148,14 +148,14 @@ public class MapperGUI extends JFrame {
 				try
 			      {
 					  ArrayList<UserGesture> gl=new  ArrayList<UserGesture>();
-			         FileInputStream fileIn = new FileInputStream("c:\\temp/gestures.ser");
+			         FileInputStream fileIn = new FileInputStream("c:\\gestures.ser");
 			         ObjectInputStream in = new ObjectInputStream(fileIn);
 			         gl = (ArrayList<UserGesture>) in.readObject();
 			         in.close();
 			         fileIn.close();
 			         Recorderv2.gestureList = gl;
 			         Recorderv2.gestureCount= gl.size();
-			         System.out.println("Serialized data was loaded from c:\\temp/employee.ser");
+			         System.out.println("Serialized data was loaded from c:\\gestures.ser");
 			         //System.out.println(Recorderv2.gestureList);
 			         deleteButton.setText("delete gesture nr. "
 								+ (Recorderv2.gestureCount-1));
@@ -576,7 +576,8 @@ class Points extends JFrame {
 	JLabel curGesture = new JLabel("current: "+Integer.toString(showingGesture));
 
 	public Points() {
-
+		showingGesture = Recorderv2.gestureList.size()-1;
+		curGesture.setText("current: "+Integer.toString(showingGesture));
 		initUI();
 	}
 	public void recalcNodes() {
