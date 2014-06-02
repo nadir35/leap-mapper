@@ -90,6 +90,8 @@ public class MapperGUI extends JFrame {
 						statusLabel.setVisible(true);
 					} else {
 						System.out.println("no leap connected");
+						statusLabel.setVisible(true);
+						statusLabel.setText("no leap connected!!");
 					}
 				}
 			}
@@ -178,6 +180,11 @@ public class MapperGUI extends JFrame {
 					{Points ps = new Points();
 				Points.area=false;
 				ps.setVisible(true);}
+				else{
+					statusLabel.setVisible(true);
+					statusLabel.setText("no gestures available");
+
+				}
 				
 			}
 		});
@@ -239,6 +246,8 @@ public class MapperGUI extends JFrame {
 						statusLabel.setText("Status: Recognizing");
 					} else {
 						System.out.println("no leap connected");
+						statusLabel.setVisible(true);
+						statusLabel.setText("no leap connected!!");
 					}
 				}
 
@@ -272,7 +281,7 @@ public class MapperGUI extends JFrame {
 		startRecog.setBounds(100, 400, 140, 30);
 		stopRecogButton.setBounds(300, 400, 140, 30);
 
-		deleteButton.setBounds(400, 100, 180, 30);
+		deleteButton.setBounds(450, 100, 180, 30);
 		saveGestures.setBounds(500, 300, 100, 30);
 		loadGestures.setBounds(600, 300, 100, 30);
 		statusLabel.setBounds(200, 500, 180, 30);

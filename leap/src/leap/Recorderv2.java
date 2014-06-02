@@ -18,11 +18,13 @@ class SampleListener2 extends Listener {
 
 	public void onInit(Controller controller) {
 		System.out.println("Initialized");
-		
+		MapperGUI.statusLabel.setText("leap not connected!!");
+		MapperGUI.statusLabel.setVisible(true);
 	}
 
 	public void onConnect(Controller controller) {
 		System.out.println("Connected");
+		MapperGUI.statusLabel.setText("");
 		MapperGUI.statusLabel.setVisible(false);
 		//Date now = new Date();
 		//System.out.println(now);
@@ -38,6 +40,7 @@ class SampleListener2 extends Listener {
 		// Note: not dispatched when running in a debugger.
 		System.out.println("Disconnected");
 		MapperGUI.statusLabel.setVisible(true);
+		MapperGUI.statusLabel.setText("leap not connected!!");
 		MapperGUI.statusRecording = false;
 		MapperGUI.statusRecognizing = false;
 	}
