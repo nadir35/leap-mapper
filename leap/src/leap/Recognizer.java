@@ -24,6 +24,7 @@ import com.leapmotion.leap.Listener;
 	static Node currentNode;
 	public static ArrayList<Frame> startFrame = new ArrayList<Frame>();
 
+
 	/*
 	 * public static void main(String[] args) throws IOException,
 	 * InterruptedException { // Create a sample listener and controller
@@ -46,6 +47,9 @@ import com.leapmotion.leap.Listener;
 		int[] matched = new int[gestureList.size()];
 		int dot=0;
 		int[] matched_attributes = new int[100];
+		String[] gestureStatus = new String[100];
+
+
 		while (MapperGUI.statusRecognizing == true) {
 			//if(dot<3)	{System.out.print(".");	dot=dot+1;} 				// FOR CONSOLE JAR
 			//else {dot=0;System.out.print("\b \b \b");}
@@ -54,7 +58,7 @@ import com.leapmotion.leap.Listener;
 			frame = controller.frame();
 			for (int gestureIterator = 0; gestureIterator < gestureList.size(); gestureIterator++) {
 				if (frame.hands().isEmpty()) break;
-				if(matched[gestureIterator]==0)
+				if(matched[gestureIterator]==0 )
 				{
 					System.out.println("NEW STARTFRAME");
 					if(!startFrame.isEmpty())startFrame.remove(gestureIterator);
@@ -66,18 +70,22 @@ import com.leapmotion.leap.Listener;
 					//	.get(gestureIterator).NodeList.size();) {
 				if (matched[gestureIterator] == gestureList
 						.get(gestureIterator).NodeList.size()-1){
-					 Robot.execute(gestureIterator);
-					if (gestureIterator==0){
-						System.out.println("A");}
-					else if(gestureIterator==1){
-						System.out.println("B");}
-					else if(gestureIterator==2){
-						System.out.println("C");}
-				
+					  Robot.execute(gestureIterator);
+					
+		
 					//System.out.println("RECOGNITION SUCCESS for gesture number "+ gestureIterator + " , action goes here");
-					matched[gestureIterator]=0;
-					timer[gestureIterator] = 0;
-					matched_attributes[gestureIterator]=0;
+			
+					if (Recorderv2.gestureList.get(Recorderv2.gestureCount-1).cont==true){
+						matched[gestureIterator]=matched[gestureIterator]-1;
+						timer[gestureIterator] = System.currentTimeMillis();
+						matched_attributes[gestureIterator]=0;			
+					}
+					else{
+						matched[gestureIterator]=0;
+						timer[gestureIterator] = 0;
+						matched_attributes[gestureIterator]=0;
+					}
+				
 					break;
 					}
 				
@@ -100,6 +108,7 @@ import com.leapmotion.leap.Listener;
 						
 						
 							if (matched_attributes[gestureIterator]==Recorderv2.gestureList.get(gestureIterator).attributes.size() && matched_attributes[gestureIterator]!=0){
+					
 								matched[gestureIterator] = matched[gestureIterator]+1;
 								timer[gestureIterator] = System.currentTimeMillis()+200;
 								matched_attributes[gestureIterator]=0;

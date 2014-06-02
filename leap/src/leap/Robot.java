@@ -24,10 +24,14 @@ public class Robot{
 				keycode=  Integer.parseInt(s);
 				System.out.println(KeyEvent.getKeyText(keycode));
 				robby.keyPress(keycode);
+				robby.delay(10);
 				robby.keyRelease(keycode);
+
+				 
 				
 				
 			
 		}
 	}
+
 }

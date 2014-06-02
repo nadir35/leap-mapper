@@ -40,6 +40,7 @@ public class MapperGUI extends JFrame {
 		// TODO Auto-generated constructor stub
 		JPanel panel = new JPanel();
 		controller.addListener(listener);
+		controller.setPolicyFlags(Controller.PolicyFlag.POLICY_BACKGROUND_FRAMES);
 		JButton startRecButton = new JButton("Start recording");
 		JButton stopRecButton = new JButton("Stop recordiing");
 		JButton stopRecogButton = new JButton("Stop recorgnizing");
@@ -82,6 +83,7 @@ public class MapperGUI extends JFrame {
 								}
 							}
 						});
+						
 						t.start();
 						runningRecording = true;
 						statusLabel.setText("Status: Recording");
@@ -280,21 +282,25 @@ public class MapperGUI extends JFrame {
 		// panel2.add(new Surface());
 
 		setSize(800, 600);
+		setFocusable(false);
+
 
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stubThread t=new Thread(new Runnable(){
+		// TODO Auto-generated method stubThread 
+		Thread t = new Thread(new Runnable(){
 
-		SwingUtilities.invokeLater(new Runnable() {
+	//	SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				MapperGUI ex = new MapperGUI();
 				ex.setVisible(true);
 
 			}
+		
 		});
-
+		t.start();
 	}
 
 }
@@ -581,6 +587,7 @@ class ActionMapper extends JFrame {
 						Recorderv2.gestureList.get(Recorderv2.gestureCount-1).actions.add(i, map_actionListModel.get(i).toString());}
 				System.out.print(Recorderv2.gestureList.get(Recorderv2.gestureCount-1).attributes.toString());
 				System.out.println("    "+Recorderv2.gestureList.get(+Recorderv2.gestureCount-1).actions.toString());
+				Recorderv2.gestureList.get(+Recorderv2.gestureCount-1).cont=true;
 				}}
 		});
 		propAddButton.addActionListener(new ActionListener() {

@@ -13,7 +13,7 @@ public class UserGesture implements Serializable {
 	public ArrayList<String> attributes = new ArrayList<String>();
 	public ArrayList<String> actions = new ArrayList<String>();
 	public ArrayList<Node> NodeList = new ArrayList<Node>();
-			
+	public boolean cont = false;		
 
 	public UserGesture() {
 		// TODO Auto-generated constructor stub
